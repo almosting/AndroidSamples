@@ -211,12 +211,11 @@ public class FileUtils {
    * @param minFree 最小可用空间[字节]
    * @return 如果可用则为真
    */
-  public static final boolean checkFreeSpace(final Context context,
-                                             final float ratio, final float minFree,
-                                             final int save_tree_id) {
+  public static boolean checkFreeSpace(final Context context,
+                                       final float ratio, final float minFree,
+                                       final int saveTreeId) {
 
-    //    	if (DEBUG) Log.v(TAG, String.format("checkFreeSpace:ratio=%f,min=%f", ratio, minFree));
-    //		Log.i(TAG, "checkFreeSpace:context=" + context + ", save_tree_id=" + save_tree_id);
+
     if (context == null) {
       return false;
     }
@@ -228,7 +227,7 @@ public class FileUtils {
       //				!Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
       // 可以写入外部存储区域
       // 如果没有外部存储权限，则返回null
-      final File dir = getCaptureDir(context, Environment.DIRECTORY_DCIM, save_tree_id);
+      final File dir = getCaptureDir(context, Environment.DIRECTORY_DCIM, saveTreeId);
       //				Log.i(TAG, "checkFreeSpace:dir=" + dir);
       if (dir != null) {
         final float freeSpace = dir.canWrite() ? dir.getUsableSpace() : 0;
@@ -251,12 +250,12 @@ public class FileUtils {
    *
    * @param type Environment.DIRECTORY_DCIM等
    */
-  public static final long getAvailableFreeSpace(final Context context,
-                                                 final String type, final int save_tree_id) {
+  public static long getAvailableFreeSpace(final Context context,
+                                           final String type, final int saveTreeId) {
 
     long result = 0;
     if (context != null) {
-      final File dir = getCaptureDir(context, type, save_tree_id);
+      final File dir = getCaptureDir(context, type, saveTreeId);
       if (dir != null) {
         result = dir.canWrite() ? dir.getUsableSpace() : 0;
       }
@@ -269,11 +268,11 @@ public class FileUtils {
    *
    * @param type Environment.DIRECTORY_DCIM等
    */
-  public static final float getFreeRatio(final Context context,
-                                         final String type, final int save_tree_id) {
+  public static float getFreeRatio(final Context context,
+                                   final String type, final int saveTreeId) {
 
     if (context != null) {
-      final File dir = getCaptureDir(context, type, save_tree_id);
+      final File dir = getCaptureDir(context, type, saveTreeId);
       if (dir != null) {
         final float freeSpace = dir.canWrite() ? dir.getUsableSpace() : 0;
         if (dir.getTotalSpace() > 0) {
@@ -287,7 +286,7 @@ public class FileUtils {
   /**
    * 删除文件名后缀
    */
-  public static final String removeFileExtension(final String path) {
+  public static String removeFileExtension(final String path) {
     final int ix = !TextUtils.isEmpty(path) ? path.lastIndexOf(".") : -1;
     if (ix > 0) {
       return path.substring(0, ix);
@@ -303,8 +302,8 @@ public class FileUtils {
    *
    * @param newExt 点扩展字符串
    */
-  public static final String replaceFileExtension(final String path,
-                                                  @NonNull final String newExt) {
+  public static String replaceFileExtension(final String path,
+                                            @NonNull final String newExt) {
     if (!TextUtils.isEmpty(path)) {
       final int ix = path.lastIndexOf(".");
       if (ix > 0) {
@@ -313,6 +312,6 @@ public class FileUtils {
         return path + newExt;
       }
     }
-    return path;  // == null or empty string
+    return path;
   }
 }

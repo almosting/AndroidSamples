@@ -60,10 +60,10 @@ public class TextureOffscreen {
    * 构造函数（GL_TEXTURE_ 2 D），无深度缓冲区
    * 纹理单位是GL_TEXTURE 0
    */
-  public TextureOffscreen(final int tex_unit,
+  public TextureOffscreen(final int texUnit,
                           final int width, final int height) {
 
-    this(GLES20.GL_TEXTURE_2D, tex_unit, -1,
+    this(GLES20.GL_TEXTURE_2D, texUnit, -1,
         width, height,
         false, DEFAULT_ADJUST_POWER2);
   }
@@ -74,25 +74,25 @@ public class TextureOffscreen {
    *
    * @param width dimension of offscreen(width)
    * @param height dimension of offscreen(height)
-   * @param use_depth_buffer set true if you use depth buffer. the depth is fixed as 16bits
+   * @param useDepthBuffer set true if you use depth buffer. the depth is fixed as 16bits
    */
   public TextureOffscreen(final int width, final int height,
-                          final boolean use_depth_buffer) {
+                          final boolean useDepthBuffer) {
 
     this(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE0, -1,
-        width, height, use_depth_buffer, DEFAULT_ADJUST_POWER2);
+        width, height, useDepthBuffer, DEFAULT_ADJUST_POWER2);
   }
 
   /**
    * 包装现有纹理的构造函数（GL_TEXTURE_2D）
    * 纹理单位是GL_TEXTURE 0
    */
-  public TextureOffscreen(final int tex_unit,
-                          final int width, final int height, final boolean use_depth_buffer) {
+  public TextureOffscreen(final int texUnit,
+                          final int width, final int height, final boolean useDepthBuffer) {
 
-    this(GLES20.GL_TEXTURE_2D, tex_unit, -1,
+    this(GLES20.GL_TEXTURE_2D, texUnit, -1,
         width, height,
-        use_depth_buffer, DEFAULT_ADJUST_POWER2);
+        useDepthBuffer, DEFAULT_ADJUST_POWER2);
   }
 
   /**
@@ -100,30 +100,30 @@ public class TextureOffscreen {
    * 纹理单位是GL_TEXTURE 0
    */
   public TextureOffscreen(final int width, final int height,
-                          final boolean use_depth_buffer, final boolean adjust_power2) {
+                          final boolean useDepthBuffer, final boolean adjustPower2) {
 
     this(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE0, -1,
-        width, height, use_depth_buffer, adjust_power2);
+        width, height, useDepthBuffer, adjustPower2);
   }
 
   /**
    * 构造函数（GL_TEXTURE_2D）
    */
-  public TextureOffscreen(final int tex_unit,
+  public TextureOffscreen(final int texUnit,
                           final int width, final int height,
-                          final boolean use_depth_buffer, final boolean adjust_power2) {
+                          final boolean useDepthBuffer, final boolean adjustPower2) {
 
-    this(GLES20.GL_TEXTURE_2D, tex_unit, -1,
-        width, height, use_depth_buffer, adjust_power2);
+    this(GLES20.GL_TEXTURE_2D, texUnit, -1,
+        width, height, useDepthBuffer, adjustPower2);
   }
 
   /**
    * 用于包装现有纹理的构造函数（GL_TEXTURE _ 2 D），没有深度缓冲区
    */
-  public TextureOffscreen(final int tex_unit, final int tex_id,
+  public TextureOffscreen(final int texUnit, final int texId,
                           final int width, final int height) {
 
-    this(GLES20.GL_TEXTURE_2D, tex_unit, tex_id,
+    this(GLES20.GL_TEXTURE_2D, texUnit, texId,
         width, height,
         false, DEFAULT_ADJUST_POWER2);
   }
@@ -131,37 +131,37 @@ public class TextureOffscreen {
   /**
    * 用于包装现有纹理的构造函数（GL_TEXTURE_2D）
    */
-  public TextureOffscreen(final int tex_unit, final int tex_id,
-                          final int width, final int height, final boolean use_depth_buffer) {
+  public TextureOffscreen(final int texUnit, final int texId,
+                          final int width, final int height, final boolean useDepthBuffer) {
 
-    this(GLES20.GL_TEXTURE_2D, tex_unit, tex_id,
+    this(GLES20.GL_TEXTURE_2D, texUnit, texId,
         width, height,
-        use_depth_buffer, DEFAULT_ADJUST_POWER2);
+        useDepthBuffer, DEFAULT_ADJUST_POWER2);
   }
 
   /**
    * 用于包装现有纹理的构造函数
    *
-   * @param tex_target GL_TEXTURE_2D
+   * @param texTarget GL_TEXTURE_2D
    */
-  public TextureOffscreen(final int tex_target, final int tex_unit, final int tex_id,
+  public TextureOffscreen(final int texTarget, final int texUnit, final int texId,
                           final int width, final int height,
-                          final boolean use_depth_buffer, final boolean adjust_power2) {
+                          final boolean useDepthBuffer, final boolean adjust_power2) {
 
     if (DEBUG) {
       Log.v(TAG, "Constructor");
     }
-    TEX_TARGET = tex_target;
-    TEX_UNIT = tex_unit;
+    TEX_TARGET = texTarget;
+    TEX_UNIT = texUnit;
     mWidth = width;
     mHeight = height;
-    mHasDepthBuffer = use_depth_buffer;
+    mHasDepthBuffer = useDepthBuffer;
     mAdjustPower2 = adjust_power2;
 
     createFrameBuffer(width, height);
-    int tex = tex_id;
+    int tex = texId;
     if (tex < 0) {
-      tex = genTexture(tex_target, tex_unit, mTexWidth, mTexHeight);
+      tex = genTexture(texTarget, texUnit, mTexWidth, mTexHeight);
     }
     assignTexture(tex, width, height);
   }
@@ -179,7 +179,6 @@ public class TextureOffscreen {
    * Viewport也将被更改，因此如有必要，请在解除绑定后设置Viewport
    */
   public void bind() {
-    //		if (DEBUG) Log.v(TAG, "bind:");
     GLES20.glActiveTexture(TEX_UNIT);
     GLES20.glBindTexture(TEX_TARGET, mFBOTextureName);
     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferObj);
@@ -190,7 +189,6 @@ public class TextureOffscreen {
    * 返回默认渲染缓冲区
    */
   public void unbind() {
-    //		if (DEBUG) Log.v(TAG, "unbind:");
     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     GLES20.glActiveTexture(TEX_UNIT);
     GLES20.glBindTexture(TEX_TARGET, 0);
@@ -230,7 +228,7 @@ public class TextureOffscreen {
   }
 
   /** 将指定的纹理指定给此屏幕 */
-  public void assignTexture(final int texture_name,
+  public void assignTexture(final int textureName,
                             final int width, final int height) {
 
     if ((width > mTexWidth) || (height > mTexHeight)) {
@@ -239,7 +237,7 @@ public class TextureOffscreen {
       releaseFrameBuffer();
       createFrameBuffer(width, height);
     }
-    mFBOTextureName = texture_name;
+    mFBOTextureName = textureName;
     GLES20.glActiveTexture(TEX_UNIT);
     // 绑定帧缓冲区对象
     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferObj);
@@ -294,16 +292,16 @@ public class TextureOffscreen {
   /**
    * 生成颜色缓冲区的纹理
    */
-  private static int genTexture(final int tex_target, final int tex_unit,
-                                final int tex_width, final int tex_height) {
+  private static int genTexture(final int texTarget, final int texUnit,
+                                final int texWidth, final int texHeight) {
     // 生成颜色缓冲区的纹理
-    final int tex_name = GLHelper.initTex(tex_target, tex_unit,
+    final int texName = GLHelper.initTex(texTarget, texUnit,
         GLES20.GL_LINEAR, GLES20.GL_LINEAR, GLES20.GL_CLAMP_TO_EDGE);
     // 安全的纹理内存区域
-    GLES20.glTexImage2D(tex_target, 0, GLES20.GL_RGBA, tex_width, tex_height, 0,
+    GLES20.glTexImage2D(texTarget, 0, GLES20.GL_RGBA, texWidth, texHeight, 0,
         GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
     GLHelper.checkGlError("glTexImage2D");
-    return tex_name;
+    return texName;
   }
 
   /** 为屏幕外渲染生成帧缓冲区对象 */

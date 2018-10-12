@@ -33,13 +33,13 @@ public class MediaScreenEncoder extends MediaVideoEncoderBase {
   public MediaScreenEncoder(final MediaMuxerWrapper muxer, final MediaEncoderCallback listener,
                             final MediaProjection projection, final int width, final int height,
                             final int density,
-                            final int _bitrate, final int _fps) {
+                            final int bitrate, final int fps) {
 
     super(muxer, listener, width, height);
     mMediaProjection = projection;
     mDensity = density;
-    fps = (_fps > 0 && _fps <= 30) ? _fps : FRAME_RATE;
-    bitrate = (_bitrate > 0) ? _bitrate : calcBitRate(_fps);
+    this.fps = (fps > 0 && fps <= 30) ? fps : FRAME_RATE;
+    this.bitrate = (bitrate > 0) ? bitrate : calcBitRate(fps);
     final HandlerThread thread = new HandlerThread(TAG);
     thread.start();
     mHandler = new Handler(thread.getLooper());

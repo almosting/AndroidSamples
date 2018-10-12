@@ -95,16 +95,15 @@ public class GLDrawer2D implements IDrawer2dES2 {
 
   @Override
   public synchronized void draw(final int texId,
-                                final float[] tex_matrix, final int offset) {
+                                final float[] texMatrix, final int offset) {
 
-    //		if (DEBUG) Log.v(TAG, "draw");
     if (hProgram < 0) {
       return;
     }
     GLES20.glUseProgram(hProgram);
-    if (tex_matrix != null) {
+    if (texMatrix != null) {
       // 指定纹理变换矩阵时
-      GLES20.glUniformMatrix4fv(muTexMatrixLoc, 1, false, tex_matrix, offset);
+      GLES20.glUniformMatrix4fv(muTexMatrixLoc, 1, false, texMatrix, offset);
     }
     // 设置模型视图转换矩阵
     GLES20.glUniformMatrix4fv(muMVPMatrixLoc, 1, false, mMvpMatrix, 0);

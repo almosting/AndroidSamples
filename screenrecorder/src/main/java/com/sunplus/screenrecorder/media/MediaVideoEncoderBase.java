@@ -17,18 +17,18 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
   private static final boolean DEBUG = false;
   private static final String TAG = "MediaVideoEncoderBase";
   private static final float BPP = 0.25f;
-  protected final int mWidth;
-  protected final int mHeight;
+  final int mWidth;
+  final int mHeight;
 
-  public MediaVideoEncoderBase(final MediaMuxerWrapper muxer, final MediaEncoderCallback listener,
-                               final int width, final int height) {
+  MediaVideoEncoderBase(final MediaMuxerWrapper muxer, final MediaEncoderCallback listener,
+                        final int width, final int height) {
     super(muxer, listener);
     mWidth = width;
     mHeight = height;
   }
 
-  protected MediaFormat createEncoderFormat(final String mime, final int frameRate,
-                                            final int bitrate) {
+  private MediaFormat createEncoderFormat(final String mime, final int frameRate,
+                                          final int bitrate) {
     if (DEBUG) {
       Log.v(TAG,
           String.format("createEncoderFormat:(%d,%d),mime=%s,frameRate=%d,bitrate=%d", mWidth,
@@ -36,15 +36,15 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
     }
     final MediaFormat format = MediaFormat.createVideoFormat(mime, mWidth, mHeight);
     format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-        MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);  // API >= 18
+        MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
     format.setInteger(MediaFormat.KEY_BIT_RATE, bitrate > 0 ? bitrate : calcBitRate(frameRate));
     format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
     format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
     return format;
   }
 
-  protected Surface prepareSurfaceEncoder(final String mime, final int frameRate,
-                                          final int bitrate)
+  Surface prepareSurfaceEncoder(final String mime, final int frameRate,
+                                final int bitrate)
       throws IOException, IllegalArgumentException {
 
     if (DEBUG) {
@@ -74,7 +74,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
     return mMediaCodec.createInputSurface();
   }
 
-  protected int calcBitRate(final int frameRate) {
+  int calcBitRate(final int frameRate) {
     final int bitrate = (int) (BPP * frameRate * mWidth * mHeight);
     Log.i(TAG, String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f));
     return bitrate;
@@ -86,7 +86,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
    * @return null if no codec matched
    */
   @SuppressWarnings("deprecation")
-  protected static final MediaCodecInfo selectVideoCodec(final String mimeType) {
+  private static final MediaCodecInfo selectVideoCodec(final String mimeType) {
     if (DEBUG) {
       Log.v(TAG, "selectVideoCodec:");
     }
@@ -116,8 +116,8 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
     return null;
   }
 
-  protected static final int selectColorFormat(final MediaCodecInfo codecInfo,
-                                               final String mimeType) {
+  static final int selectColorFormat(final MediaCodecInfo codecInfo,
+                                             final String mimeType) {
     if (DEBUG) {
       Log.i(TAG, "selectColorFormat: ");
     }
@@ -146,7 +146,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
   /**
    * color formats that we can use in this class
    */
-  protected static int[] recognizedFormats;
+  private static int[] recognizedFormats;
 
   static {
     recognizedFormats = new int[] {
@@ -157,7 +157,7 @@ public abstract class MediaVideoEncoderBase extends MediaEncoder {
     };
   }
 
-  protected static final boolean isRecognizedViewoFormat(final int colorFormat) {
+  private static final boolean isRecognizedViewoFormat(final int colorFormat) {
     if (DEBUG) {
       Log.i(TAG, "isRecognizedViewoFormat:colorFormat=" + colorFormat);
     }

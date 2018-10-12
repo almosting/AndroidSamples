@@ -67,12 +67,12 @@ public class SDUtils {
 
   /**
    * uri从请求代码中，用于保存的共享首选项的密钥名称
-   * @param request_code
+   * @param requestCode
    * @return
    */
   @NonNull
-  private static String getKey(final int request_code) {
-    return String.format(Locale.US, "SDUtils-%d", request_code);
+  private static String getKey(final int requestCode) {
+    return String.format(Locale.US, "SDUtils-%d", requestCode);
   }
 
   /**
@@ -129,15 +129,15 @@ public class SDUtils {
    * 请求Uri进行文件读取
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param activity
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestOpenDocument(@NonNull final Activity activity,
-                                         final String mime_type, final int request_code) {
+                                         final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      activity.startActivityForResult(prepareOpenDocumentIntent(mime_type), request_code);
+      activity.startActivityForResult(prepareOpenDocumentIntent(mimeType), requestCode);
     }
   }
 
@@ -145,15 +145,15 @@ public class SDUtils {
    * 请求Uri进行文件读取
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param activity
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestOpenDocument(@NonNull final FragmentActivity activity,
-                                         final String mime_type, final int request_code) {
+                                         final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      activity.startActivityForResult(prepareOpenDocumentIntent(mime_type), request_code);
+      activity.startActivityForResult(prepareOpenDocumentIntent(mimeType), requestCode);
     }
   }
 
@@ -161,15 +161,15 @@ public class SDUtils {
    * 请求Uri进行文件读取
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param fragment
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestOpenDocument(@NonNull final android.app.Fragment fragment,
-                                         final String mime_type, final int request_code) {
+                                         final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      fragment.startActivityForResult(prepareOpenDocumentIntent(mime_type), request_code);
+      fragment.startActivityForResult(prepareOpenDocumentIntent(mimeType), requestCode);
     }
   }
 
@@ -177,28 +177,28 @@ public class SDUtils {
    * 请求Uri进行文件读取
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param fragment
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestOpenDocument(@NonNull final android.support.v4.app.Fragment fragment,
-                                         final String mime_type, final int request_code) {
+                                         final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      fragment.startActivityForResult(prepareOpenDocumentIntent(mime_type), request_code);
+      fragment.startActivityForResult(prepareOpenDocumentIntent(mimeType), requestCode);
     }
   }
 
   /**
    * 请求Uri读取文件的Helper方法
    * 在KITKAT之后为每个单独的文件请求权限时
-   * @param mime_type
+   * @param mimeType
    * @return
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
-  private static Intent prepareOpenDocumentIntent(@NonNull final String mime_type) {
+  private static Intent prepareOpenDocumentIntent(@NonNull final String mimeType) {
     final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-    intent.setType(mime_type);
+    intent.setType(mimeType);
     return intent;
   }
 
@@ -206,15 +206,15 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param activity
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final Activity activity,
-                                           final String mime_type, final int request_code) {
+                                           final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      activity.startActivityForResult(prepareCreateDocument(mime_type, null), request_code);
+      activity.startActivityForResult(prepareCreateDocument(mimeType, null), requestCode);
     }
   }
 
@@ -222,16 +222,16 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param activity
-   * @param mime_type
-   * @param default_name
-   * @param request_code
+   * @param mimeType
+   * @param defaultName
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final Activity activity,
-                                           final String mime_type, final String default_name, final int request_code) {
+                                           final String mimeType, final String defaultName, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      activity.startActivityForResult(prepareCreateDocument(mime_type, default_name), request_code);
+      activity.startActivityForResult(prepareCreateDocument(mimeType, defaultName), requestCode);
     }
   }
 
@@ -239,15 +239,15 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param activity
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final FragmentActivity activity,
-                                           final String mime_type, final int request_code) {
+                                           final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      activity.startActivityForResult(prepareCreateDocument(mime_type, null), request_code);
+      activity.startActivityForResult(prepareCreateDocument(mimeType, null), requestCode);
     }
   }
 
@@ -255,16 +255,16 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param activity
-   * @param mime_type
-   * @param default_name
-   * @param request_code
+   * @param mimeType
+   * @param defaultName
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final FragmentActivity activity,
-                                           final String mime_type, final String default_name, final int request_code) {
+                                           final String mimeType, final String defaultName, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      activity.startActivityForResult(prepareCreateDocument(mime_type, default_name), request_code);
+      activity.startActivityForResult(prepareCreateDocument(mimeType, defaultName), requestCode);
     }
   }
 
@@ -272,15 +272,15 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param fragment
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final android.app.Fragment fragment,
-                                           final String mime_type, final int request_code) {
+                                           final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      fragment.startActivityForResult(prepareCreateDocument(mime_type, null), request_code);
+      fragment.startActivityForResult(prepareCreateDocument(mimeType, null), requestCode);
     }
   }
 
@@ -288,16 +288,16 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param fragment
-   * @param mime_type
-   * @param default_name
-   * @param request_code
+   * @param mimeType
+   * @param defaultName
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final android.app.Fragment fragment,
-                                           final String mime_type, final String default_name, final int request_code) {
+                                           final String mimeType, final String defaultName, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      fragment.startActivityForResult(prepareCreateDocument(mime_type, default_name), request_code);
+      fragment.startActivityForResult(prepareCreateDocument(mimeType, defaultName), requestCode);
     }
   }
 
@@ -305,15 +305,15 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param fragment
-   * @param mime_type
-   * @param request_code
+   * @param mimeType
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final android.support.v4.app.Fragment fragment,
-                                           final String mime_type, final int request_code) {
+                                           final String mimeType, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      fragment.startActivityForResult(prepareCreateDocument(mime_type, null), request_code);
+      fragment.startActivityForResult(prepareCreateDocument(mimeType, null), requestCode);
     }
   }
 
@@ -321,32 +321,32 @@ public class SDUtils {
    * 请求Uri保存文件
    * 在KITKAT之后为每个单独的文件请求权限时
    * @param fragment
-   * @param mime_type
-   * @param default_name
-   * @param request_code
+   * @param mimeType
+   * @param defaultName
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static void requestCreateDocument(@NonNull final android.support.v4.app.Fragment fragment,
-                                           final String mime_type, final String default_name, final int request_code) {
+                                           final String mimeType, final String defaultName, final int requestCode) {
 
     if (BuildCheck.isKitKat()) {
-      fragment.startActivityForResult(prepareCreateDocument(mime_type, default_name), request_code);
+      fragment.startActivityForResult(prepareCreateDocument(mimeType, defaultName), requestCode);
     }
   }
 
   /**
    * 请求Uri保存文件的Helper方法
    * 在KITKAT之后为每个单独的文件请求权限时
-   * @param mime_type
-   * @param default_name
+   * @param mimeType
+   * @param defaultName
    * @return
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
-  private static Intent prepareCreateDocument(final String mime_type, final String default_name) {
+  private static Intent prepareCreateDocument(final String mimeType, final String defaultName) {
     final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-    intent.setType(mime_type);
-    if (!TextUtils.isEmpty(default_name)) {
-      intent.putExtra(Intent.EXTRA_TITLE, default_name);
+    intent.setType(mimeType);
+    if (!TextUtils.isEmpty(defaultName)) {
+      intent.putExtra(Intent.EXTRA_TITLE, defaultName);
     }
     return intent;
   }
@@ -371,16 +371,16 @@ public class SDUtils {
   /**
    * 是否可以访问对应于request_code的Uri
    * @param context
-   * @param request_code
+   * @param requestCode
    * @return
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
   public static boolean hasStorageAccess(@NonNull final Context context,
-                                         final int request_code) {
+                                         final int requestCode) {
 
     boolean found = false;
     if (BuildCheck.isLollipop()) {
-      final Uri uri = loadUri(context, getKey(request_code));
+      final Uri uri = loadUri(context, getKey(requestCode));
       if (uri != null) {
         // 获取永久存储的Uri权限列表
         final List<UriPermission> list
@@ -400,18 +400,18 @@ public class SDUtils {
   /**
    * 请求访问与request_code相对应的Uri
    * @param activity
-   * @param request_code
+   * @param requestCode
    * @return 如果已经存在与request_code相对应的Uri，则返回它，如果它不存在，则发出权限请求并返回null
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static Uri requestStorageAccess(@NonNull final Activity activity,
-                                         final int request_code) {
+                                         final int requestCode) {
 
     if (BuildCheck.isLollipop()) {
-      final Uri uri = getStorageUri(activity, request_code);
+      final Uri uri = getStorageUri(activity, requestCode);
       if (uri == null) {
         // 请求并返回null，如果它没有对request_code对应的Uri的权限
-        activity.startActivityForResult(prepareStorageAccessPermission(), request_code);
+        activity.startActivityForResult(prepareStorageAccessPermission(), requestCode);
       }
       return uri;
     }
@@ -421,18 +421,18 @@ public class SDUtils {
   /**
    * 请求访问与request_code相对应的Uri
    * @param activity
-   * @param request_code
+   * @param requestCode
    * @return 如果已经存在与request_code相对应的Uri，则返回它，如果它不存在，则发出权限请求并返回null
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static Uri requestStorageAccess(@NonNull final FragmentActivity activity,
-                                         final int request_code) {
+                                         final int requestCode) {
 
     if (BuildCheck.isLollipop()) {
-      final Uri uri = getStorageUri(activity, request_code);
+      final Uri uri = getStorageUri(activity, requestCode);
       if (uri == null) {
         // 请求并返回null，如果它没有对request_code对应的Uri的权限
-        activity.startActivityForResult(prepareStorageAccessPermission(), request_code);
+        activity.startActivityForResult(prepareStorageAccessPermission(), requestCode);
       }
       return uri;
     }
@@ -442,17 +442,17 @@ public class SDUtils {
   /**
    * 请求访问与request_code相对应的Uri
    * @param fragment
-   * @param request_code
+   * @param requestCode
    * @return 如果已经存在与request_code相对应的Uri，则返回它，如果它不存在，则发出权限请求并返回null
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static Uri requestStorageAccess(@NonNull final android.app.Fragment fragment,
-                                         final int request_code) {
+                                         final int requestCode) {
 
-    final Uri uri = getStorageUri(fragment.getActivity(), request_code);
+    final Uri uri = getStorageUri(fragment.getActivity(), requestCode);
     if (uri == null) {
       // 请求并返回null，如果它没有对request_code对应的Uri的权限
-      fragment.startActivityForResult(prepareStorageAccessPermission(), request_code);
+      fragment.startActivityForResult(prepareStorageAccessPermission(), requestCode);
     }
     return uri;
   }
@@ -460,19 +460,19 @@ public class SDUtils {
   /**
    * 请求访问与request_code相对应的Uri
    * @param fragment
-   * @param request_code
+   * @param requestCode
    * @return 如果已经存在与request_code相对应的Uri，则返回它，如果它不存在，则发出权限请求并返回null
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static Uri requestStorageAccess(@NonNull final android.support.v4.app.Fragment fragment,
-                                         final int request_code) {
+                                         final int requestCode) {
 
     if (BuildCheck.isLollipop()) {
       final Activity activity = fragment.getActivity();
-      final Uri uri = activity != null ? getStorageUri(activity, request_code) : null;
+      final Uri uri = activity != null ? getStorageUri(activity, requestCode) : null;
       if (uri == null) {
         // 请求并返回null，如果它没有对request_code对应的Uri的权限
-        fragment.startActivityForResult(prepareStorageAccessPermission(), request_code);
+        fragment.startActivityForResult(prepareStorageAccessPermission(), requestCode);
       }
       return uri;
     }
@@ -482,16 +482,16 @@ public class SDUtils {
   /**
    * 如果存在与request_code对应的Uri，如果有永久权限，则返回它，否则返回null
    * @param context
-   * @param request_code
+   * @param requestCode
    * @return
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   @Nullable
   public static Uri getStorageUri(@NonNull final Context context,
-                                  final int request_code) {
+                                  final int requestCode) {
 
     if (BuildCheck.isLollipop()) {
-      final Uri uri = loadUri(context, getKey(request_code));
+      final Uri uri = loadUri(context, getKey(requestCode));
       if (uri != null) {
         boolean found = false;
         // 获取永久存储的Uri权限列表
@@ -524,35 +524,35 @@ public class SDUtils {
   /**
    * 要求永久访问权限
    * @param context
-   * @param tree_uri
+   * @param treeUri
    * @return
    */
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static Uri requestStorageAccessPermission(@NonNull final Context context,
-                                                   final int request_code, final Uri tree_uri) {
+                                                   final int requestCode, final Uri treeUri) {
 
     return requestStorageAccessPermission(context,
-        request_code, tree_uri,
+        requestCode, treeUri,
         Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
   }
 
   /**
    * 要求永久访问权限
    * @param context
-   * @param tree_uri
+   * @param treeUri
    * @param flags
    * @return
    */
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static Uri requestStorageAccessPermission(@NonNull final Context context,
-                                                   final int request_code, final Uri tree_uri, final int flags) {
+                                                   final int requestCode, final Uri treeUri, final int flags) {
 
     if (BuildCheck.isLollipop()) {
-      context.getContentResolver().takePersistableUriPermission(tree_uri, flags);
-      saveUri(context, getKey(request_code), tree_uri);
-      return tree_uri;
+      context.getContentResolver().takePersistableUriPermission(treeUri, flags);
+      saveUri(context, getKey(requestCode), treeUri);
+      return treeUri;
     } else {
       return null;
     }
@@ -561,14 +561,14 @@ public class SDUtils {
   /**
    * 要求永久访问权限
    * @param context
-   * @param request_code
+   * @param requestCode
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static void releaseStorageAccessPermission(@NonNull final Context context,
-                                                    final int request_code) {
+                                                    final int requestCode) {
 
     if (BuildCheck.isLollipop()) {
-      final String key = getKey(request_code);
+      final String key = getKey(requestCode);
       final Uri uri = loadUri(context, key);
       if (uri != null) {
         context.getContentResolver().releasePersistableUriPermission(uri,
@@ -586,32 +586,32 @@ public class SDUtils {
   /**
    * 当存在与指定id对应的Uri时，返回相应的DocumentFile
    * @param context
-   * @param tree_id
+   * @param treeId
    * @return
    */
   @Nullable
   public static DocumentFile getStorage(@NonNull final Context context,
-                                        final int tree_id) throws IOException {
+                                        final int treeId) throws IOException {
 
-    return getStorage(context, tree_id, null);
+    return getStorage(context, treeId, null);
   }
 
   /**
    * 如果存在与指定的id相对应的Uri并且它是可写的，则在其下创建目录
    * 返回指示该目录的DocumentFile对象
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param dirs 由斜杠（`/`）分隔的路径字符串
    * @return 对应于底层目录的DocumentFile，Uri不存在，如果无法写入则为null
    */
   @Nullable
   public static DocumentFile getStorage(@NonNull final Context context,
-                                        final int tree_id, @Nullable final String dirs) throws IOException {
+                                        final int treeId, @Nullable final String dirs) throws IOException {
 
     if (BuildCheck.isLollipop()) {
-      final Uri tree_uri = getStorageUri(context, tree_id);
-      if (tree_uri != null) {
-        DocumentFile tree = DocumentFile.fromTreeUri(context, tree_uri);
+      final Uri treeUri = getStorageUri(context, treeId);
+      if (treeUri != null) {
+        DocumentFile tree = DocumentFile.fromTreeUri(context, treeUri);
         if (!TextUtils.isEmpty(dirs)) {
           final String[] dir = dirs.split("/");
           for (final String d: dir) {
@@ -744,7 +744,7 @@ public class SDUtils {
   /**
    * 当存在指定的Uri时，它会创建一个DocumentFile对象以引用相应的文件
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param mime
    * @param name
    * @return
@@ -752,15 +752,15 @@ public class SDUtils {
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static DocumentFile getStorageFile(@NonNull final Context context,
-                                            final int tree_id, final String mime, final String name) throws IOException {
+                                            final int treeId, final String mime, final String name) throws IOException {
 
-    return getStorageFile(context, tree_id, null, mime, name);
+    return getStorageFile(context, treeId, null, mime, name);
   }
 
   /**
    * 当存在指定的Uri时，它会创建一个DocumentFile对象以引用相应的文件
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param mime
    * @param name
    * @return
@@ -768,11 +768,11 @@ public class SDUtils {
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static DocumentFile getStorageFile(@NonNull final Context context,
-                                            final int tree_id, @Nullable final String dirs,
+                                            final int treeId, @Nullable final String dirs,
                                             final String mime, final String name) throws IOException {
 
     if (BuildCheck.isLollipop()) {
-      final DocumentFile tree = getStorage(context, tree_id, dirs);
+      final DocumentFile tree = getStorage(context, treeId, dirs);
       if (tree != null) {
         final DocumentFile file = tree.findFile(name);
         if (file != null) {
@@ -822,7 +822,7 @@ public class SDUtils {
   /**
    * 当指定的Uri存在时，它会在其下创建一个输出文件并将其作为OutputStream返回
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param mime
    * @param name
    * @return
@@ -830,16 +830,16 @@ public class SDUtils {
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static OutputStream getStorageOutputStream(@NonNull final Context context,
-                                                    final int tree_id,
+                                                    final int treeId,
                                                     final String mime, final String name) throws IOException {
 
-    return getStorageOutputStream(context, tree_id, null, mime, name);
+    return getStorageOutputStream(context, treeId, null, mime, name);
   }
 
   /**
    * 当指定的Uri存在时，它会在其下创建一个输出文件并将其作为OutputStream返回
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param dirs
    * @param mime
    * @param name
@@ -848,11 +848,11 @@ public class SDUtils {
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static OutputStream getStorageOutputStream(@NonNull final Context context,
-                                                    final int tree_id, @Nullable final String dirs,
+                                                    final int treeId, @Nullable final String dirs,
                                                     final String mime, final String name) throws IOException {
 
     if (BuildCheck.isLollipop()) {
-      final DocumentFile tree = getStorage(context, tree_id, dirs);
+      final DocumentFile tree = getStorage(context, treeId, dirs);
       if (tree != null) {
         final DocumentFile file = tree.findFile(name);
         if (file != null) {
@@ -906,7 +906,7 @@ public class SDUtils {
   /**
    * 当指定的Uri存在时，它会在其下创建一个输出文件并将其作为OutputStream返回
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param mime
    * @param name
    * @return
@@ -914,16 +914,16 @@ public class SDUtils {
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static InputStream getStorageInputStream(@NonNull final Context context,
-                                                  final int tree_id,
+                                                  final int treeId,
                                                   final String mime, final String name) throws IOException {
 
-    return getStorageInputStream(context, tree_id, null, mime, name);
+    return getStorageInputStream(context, treeId, null, mime, name);
   }
 
   /**
    * 当指定的Uri存在时，它将输入文件作为InputStream返回
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param dirs
    * @param mime
    * @param name
@@ -932,11 +932,11 @@ public class SDUtils {
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static InputStream getStorageInputStream(@NonNull final Context context,
-                                                  final int tree_id, @Nullable final String dirs,
+                                                  final int treeId, @Nullable final String dirs,
                                                   final String mime, final String name) throws IOException {
 
     if (BuildCheck.isLollipop()) {
-      final DocumentFile tree = getStorage(context, tree_id, dirs);
+      final DocumentFile tree = getStorage(context, treeId, dirs);
       if (tree != null) {
         final DocumentFile file = tree.findFile(name);
         if (file != null) {
@@ -984,7 +984,7 @@ public class SDUtils {
   /**
    * 当指定的Uri存在时，它会在其下创建一个输入文件，并返回输入/输出的文件描述符
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param dirs
    * @param mime
    * @param name
@@ -993,11 +993,11 @@ public class SDUtils {
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static ParcelFileDescriptor getStorageFileFD(@NonNull final Context context,
-                                                      final int tree_id, @Nullable final String dirs,
+                                                      final int treeId, @Nullable final String dirs,
                                                       final String mime, final String name) throws IOException {
 
     if (BuildCheck.isLollipop()) {
-      final DocumentFile tree = getStorage(context, tree_id, dirs);
+      final DocumentFile tree = getStorage(context, treeId, dirs);
       if (tree != null) {
         final DocumentFile file = tree.findFile(name);
         if (file != null) {
@@ -1052,19 +1052,19 @@ public class SDUtils {
   /**
    * 当存在与指定id对应的Uri时，它返回用于在其下创建文件的路径
    * @param context
-   * @param tree_id
+   * @param treeId
    * @return
    */
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static File createStorageDir(@NonNull final Context context,
-                                      final int tree_id) {
+                                      final int treeId) {
 
     if (BuildCheck.isLollipop()) {
-      final Uri tree_uri = getStorageUri(context, tree_id);
-      if (tree_uri != null) {
-        final DocumentFile save_tree = DocumentFile.fromTreeUri(context, tree_uri);
-        final String path = UriHelper.getPath(context, save_tree.getUri());
+      final Uri treeUri = getStorageUri(context, treeId);
+      if (treeUri != null) {
+        final DocumentFile saveTree = DocumentFile.fromTreeUri(context, treeUri);
+        final String path = UriHelper.getPath(context, saveTree.getUri());
         if (!TextUtils.isEmpty(path)) {
           return new File(path);
         }
@@ -1076,37 +1076,37 @@ public class SDUtils {
   /**
    * 当存在与指定id相对应的Uri时，它会创建并返回其下面指定的File
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param mime
-   * @param file_name
+   * @param fileName
    * @return
    */
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static File createStorageFile(@NonNull final Context context,
-                                       final int tree_id, final String mime, final String file_name) {
+                                       final int treeId, final String mime, final String fileName) {
 
-    return createStorageFile(context, getStorageUri(context, tree_id), mime, file_name);
+    return createStorageFile(context, getStorageUri(context, treeId), mime, fileName);
   }
 
   /**
    * 返回在指定的Uri存在时创建文件的路径
    * @param context
-   * @param tree_uri
+   * @param treeUri
    * @param mime
-   * @param file_name
+   * @param fileName
    * @return
    */
   @Nullable
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static File createStorageFile(@NonNull final Context context,
-                                       final Uri tree_uri, final String mime, final String file_name) {
-    Log.i(TAG, "createStorageFile:" + file_name);
+                                       final Uri treeUri, final String mime, final String fileName) {
+    Log.i(TAG, "createStorageFile:" + fileName);
 
     if (BuildCheck.isLollipop()) {
-      if ((tree_uri != null) && !TextUtils.isEmpty(file_name)) {
-        final DocumentFile save_tree = DocumentFile.fromTreeUri(context, tree_uri);
-        final DocumentFile target = save_tree.createFile(mime, file_name);
+      if ((treeUri != null) && !TextUtils.isEmpty(fileName)) {
+        final DocumentFile saveTree = DocumentFile.fromTreeUri(context, treeUri);
+        final DocumentFile target = saveTree.createFile(mime, fileName);
         final String path = UriHelper.getPath(context, target.getUri());
         if (!TextUtils.isEmpty(path)) {
           return new File(path);
@@ -1119,37 +1119,38 @@ public class SDUtils {
   /**
    * 当存在与指定id相对应的Uri时，它返回其下生成的文件的原始文件描述符
    * @param context
-   * @param tree_id
+   * @param treeId
    * @param mime
-   * @param file_name
+   * @param fileName
    * @return
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static int createStorageFileFD(@NonNull final Context context,
-                                        final int tree_id, final String mime, final String file_name) {
+                                        final int treeId, final String mime, final String fileName) {
 
-    Log.i(TAG, "createStorageFileFD:" + file_name);
-    return createStorageFileFD(context, getStorageUri(context, tree_id), mime, file_name);
+    Log.i(TAG, "createStorageFileFD:" + fileName);
+    return createStorageFileFD(context, getStorageUri(context, treeId), mime, fileName);
   }
 
   /**
    * 当存在与指定id相对应的Uri时，它返回其下生成的文件的原始文件描述符
    * @param context
-   * @param tree_uri
+   * @param treeUri
    * @param mime
-   * @param file_name
+   * @param fileName
    * @return
    */
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public static int createStorageFileFD(@NonNull final Context context,
-                                        final Uri tree_uri, final String mime, final String file_name) {
+                                        final Uri treeUri, final String mime, final String fileName) {
 
-    Log.i(TAG, "createStorageFileFD:" + file_name);
+    Log.i(TAG, "createStorageFileFD:" + fileName);
     if (BuildCheck.isLollipop()) {
-      if ((tree_uri != null) && !TextUtils.isEmpty(file_name)) {
-        final DocumentFile save_tree = DocumentFile.fromTreeUri(context, tree_uri);
-        final DocumentFile target = save_tree.createFile(mime, file_name);
+      if ((treeUri != null) && !TextUtils.isEmpty(fileName)) {
+        final DocumentFile saveTree = DocumentFile.fromTreeUri(context, treeUri);
+        final DocumentFile target = saveTree.createFile(mime, fileName);
         try {
+          assert target != null;
           final ParcelFileDescriptor fd
               = context.getContentResolver().openFileDescriptor(target.getUri(), "rw");
           return fd != null ? fd.getFd() : 0;

@@ -13,7 +13,7 @@ public interface IDrawer2D {
 
   void getMvpMatrix(final float[] matrix, final int offset);
 
-  void draw(final int texId, final float[] tex_matrix, final int offset);
+  void draw(final int texId, final float[] texMatrix, final int offset);
 
   void draw(final ITexture texture);
 

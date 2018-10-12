@@ -22,7 +22,7 @@ import java.io.File;
  * Email: fengweisb@gmail.com
  */
 public class UriHelper {
-  private static final boolean DEBUG = false;  // FIXME 実働時はfalseにすること
+  private static final boolean DEBUG = false;
   private static final String TAG = UriHelper.class.getSimpleName();
 
   /**
@@ -49,7 +49,6 @@ public class UriHelper {
         //				if (DEBUG) Log.w(TAG, e);
       }
     }
-    //		Log.v("UriHandler", "getAbsolutePath:" + path);
     return path;
   }
 
@@ -153,22 +152,22 @@ public class UriHelper {
                 // 跳过主存储
                 continue;
               }
-              final String dir_path = dir != null ? dir.getAbsolutePath() : null;
-              if (!TextUtils.isEmpty(dir_path)) {
-                final String[] dir_elements = dir_path.split("/");
-                final int m = dir_elements.length;
-                if ((m > 2) && "storage".equalsIgnoreCase(dir_elements[1])
-                    && type.equalsIgnoreCase(dir_elements[2])) {
+              final String dirPath = dir != null ? dir.getAbsolutePath() : null;
+              if (!TextUtils.isEmpty(dirPath)) {
+                final String[] dirElements = dirPath.split("/");
+                final int m = dirElements.length;
+                if ((m > 2) && "storage".equalsIgnoreCase(dirElements[1])
+                    && type.equalsIgnoreCase(dirElements[2])) {
 
                   boolean found = false;
                   sb.setLength(0);
-                  sb.append('/').append(dir_elements[1]);
+                  sb.append('/').append(dirElements[1]);
                   for (int j = 2; j < m; j++) {
-                    if ("Android".equalsIgnoreCase(dir_elements[j])) {
+                    if ("Android".equalsIgnoreCase(dirElements[j])) {
                       found = true;
                       break;
                     }
-                    sb.append('/').append(dir_elements[j]);
+                    sb.append('/').append(dirElements[j]);
                   }
                   if (found) {
                     final File path = new File(new File(sb.toString()), split[1]);
@@ -252,8 +251,8 @@ public class UriHelper {
     try {
       cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
       if ((cursor != null) && cursor.moveToFirst()) {
-        final int column_index = cursor.getColumnIndexOrThrow(column);
-        return cursor.getString(column_index);
+        final int columnIndex = cursor.getColumnIndexOrThrow(column);
+        return cursor.getString(columnIndex);
       }
     } finally {
       if (cursor != null) {

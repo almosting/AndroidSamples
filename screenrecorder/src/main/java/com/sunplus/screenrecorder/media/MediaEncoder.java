@@ -26,33 +26,33 @@ public abstract class MediaEncoder implements Runnable {
     void onStopped(MediaEncoder encoder);
   }
 
-  protected final Object mSync = new Object();
+  private final Object mSync = new Object();
 
-  protected volatile boolean mIsCapturing;
+  volatile boolean mIsCapturing;
 
-  protected volatile boolean mRequestStop;
+  volatile boolean mRequestStop;
 
-  protected boolean mIsEOS;
+  boolean mIsEOS;
 
-  protected boolean mMuxerStarted;
+  boolean mMuxerStarted;
 
-  protected int mTrackIndex;
+  int mTrackIndex;
 
-  protected MediaCodec mMediaCodec;
+  MediaCodec mMediaCodec;
 
-  protected final WeakReference<MediaMuxerWrapper> mWeakMuxer;
+  private final WeakReference<MediaMuxerWrapper> mWeakMuxer;
 
   private int mRequestDrain;
 
   private MediaCodec.BufferInfo mBufferInfo;
 
-  protected final MediaEncoderCallback mListener;
+  final MediaEncoderCallback mListener;
 
-  protected volatile boolean mRequestPause;
+  private volatile boolean mRequestPause;
 
   private long mLastPausedTimesUs;
 
-  public MediaEncoder(final MediaMuxerWrapper muxer, final MediaEncoderCallback callback) {
+  MediaEncoder(final MediaMuxerWrapper muxer, final MediaEncoderCallback callback) {
     if (callback == null) {
       throw new NullPointerException("MediaEncoderCallBack is Null");
     }
@@ -84,7 +84,9 @@ public abstract class MediaEncoder implements Runnable {
   }
 
   public boolean frameAvailableSoon() {
-    if (DEBUG) Log.v(TAG, "frameAvailableSoon");
+    if (DEBUG) {
+      Log.v(TAG, "frameAvailableSoon");
+    }
     synchronized (mSync) {
       if (!mIsCapturing || mRequestStop) {
         return false;
@@ -106,10 +108,9 @@ public abstract class MediaEncoder implements Runnable {
       mRequestDrain = 0;
       mSync.notify();
     }
-    final boolean isRunning = true;
     boolean localRequestStop;
     boolean localRequestDrain;
-    while (isRunning) {
+    while (true) {
       synchronized (mSync) {
         localRequestStop = mRequestStop;
         localRequestDrain = (mRequestDrain > 0);
@@ -179,14 +180,15 @@ public abstract class MediaEncoder implements Runnable {
       if (!mIsCapturing || mRequestStop) {
         return;
       }
-      mRequestStop = true;  // for rejecting newer frame
+      // for rejecting newer frame
+      mRequestStop = true;
       mSync.notifyAll();
       // We can not know when the encoding and writing finish.
       // so we return immediately after request to avoid delay of caller thread
     }
   }
 
-  /*package*/ void pauseRecording() {
+  void pauseRecording() {
     if (DEBUG) {
       Log.v(TAG, "pauseRecording");
     }
@@ -200,7 +202,7 @@ public abstract class MediaEncoder implements Runnable {
     }
   }
 
-  /*package*/ void resumeRecording() {
+  void resumeRecording() {
     if (DEBUG) {
       Log.v(TAG, "resumeRecording");
     }
@@ -270,7 +272,7 @@ public abstract class MediaEncoder implements Runnable {
    *
    * @param length 　length of byte array, zero means EOS.
    */
-  protected void encode(final ByteBuffer buffer, final int length, final long presentationTimeUs) {
+  void encode(final ByteBuffer buffer, final int length, final long presentationTimeUs) {
     if (!mIsCapturing) {
       return;
     }
@@ -309,7 +311,7 @@ public abstract class MediaEncoder implements Runnable {
   /**
    * drain encoded data and write them to muxer
    */
-  protected void drain() {
+  private void drain() {
     if (mMediaCodec == null) {
       return;
     }
@@ -346,12 +348,13 @@ public abstract class MediaEncoder implements Runnable {
         // this should come only once before actual encoded data
         // but this status never come on Android4.3 or less
         // and in that case, you should treat when MediaCodec.BUFFER_FLAG_CODEC_CONFIG come.
-        if (mMuxerStarted) {  // second time request is error
+        // second time request is error
+        if (mMuxerStarted) {
           throw new RuntimeException("format changed twice");
         }
         // get output format from codec and pass them to muxer
         // getOutputFormat should be called after INFO_OUTPUT_FORMAT_CHANGED otherwise crash.
-        final MediaFormat format = mMediaCodec.getOutputFormat(); // API >= 16
+        final MediaFormat format = mMediaCodec.getOutputFormat();
         mTrackIndex = muxer.addTrack(format);
         mMuxerStarted = true;
         if (!muxer.start()) {
@@ -423,7 +426,7 @@ public abstract class MediaEncoder implements Runnable {
   /**
    * get next encoding presentationTimeUs
    */
-  protected long getPTSUs() {
+  long getPTSUs() {
     long result;
     synchronized (mSync) {
       result = System.nanoTime() / 1000L - offsetPTSUs;

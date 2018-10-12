@@ -155,16 +155,16 @@ public class ScreenRecorderService extends Service {
           int height = metrics.heightPixels;
           if (width > height) {
             // 横屏
-            final float scale_x = width / 1920f;
-            final float scale_y = height / 1080f;
-            final float scale = Math.max(scale_x, scale_y);
+            final float scaleX = width / 1920f;
+            final float scaleY = height / 1080f;
+            final float scale = Math.max(scaleX, scaleY);
             width = (int) (width / scale);
             height = (int) (height / scale);
           } else {
             // 竖屏
-            final float scale_x = width / 1080f;
-            final float scale_y = height / 1920f;
-            final float scale = Math.max(scale_x, scale_y);
+            final float scaleX = width / 1080f;
+            final float scaleY = height / 1920f;
+            final float scale = Math.max(scaleX, scaleY);
             width = (int) (width / scale);
             height = (int) (height / scale);
           }
@@ -205,7 +205,7 @@ public class ScreenRecorderService extends Service {
         // you should not wait here
       }
     }
-    stopForeground(true/*removeNotification*/);
+    stopForeground(true);
     if (mNotificationManager != null) {
       mNotificationManager.cancel(NOTIFICATION);
       mNotificationManager = null;

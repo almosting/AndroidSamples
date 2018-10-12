@@ -178,7 +178,7 @@ public class MediaAudioEncoder extends MediaEncoder {
    * @param mimeType
    * @return
    */
-  private static final MediaCodecInfo selectAudioCodec(final String mimeType) {
+  private static MediaCodecInfo selectAudioCodec(final String mimeType) {
     if (DEBUG) {
       Log.v(TAG, "selectAudioCodec:");
     }

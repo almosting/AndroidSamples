@@ -15,7 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Toast;
-import android.widget.ToggleButton;import com.fengwei23.androidsample.service.ScreenRecorderService;
+import android.widget.ToggleButton;
+import com.fengwei23.androidsample.service.ScreenRecorderService;
 import com.sunplus.toolbox.utils.BuildCheck;
 import com.sunplus.toolbox.utils.PermissionCheck;
 import java.lang.ref.WeakReference;
@@ -35,7 +36,6 @@ public class ScreenRecorderActivity extends AppCompatActivity
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    if (DEBUG) Log.v(TAG, "onCreate:");
     setContentView(R.layout.activity_screen_recorder);
     mRecordButton = findViewById(R.id.record_button);
     mPauseButton = findViewById(R.id.pause_button);
@@ -48,9 +48,6 @@ public class ScreenRecorderActivity extends AppCompatActivity
   @Override
   protected void onResume() {
     super.onResume();
-    if (DEBUG) {
-      Log.v(TAG, "onResume:");
-    }
     final IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(ScreenRecorderService.ACTION_QUERY_STATUS_RESULT);
     registerReceiver(mReceiver, intentFilter);
@@ -59,7 +56,6 @@ public class ScreenRecorderActivity extends AppCompatActivity
 
   @Override
   protected void onPause() {
-    if (DEBUG) Log.v(TAG, "onPause:");
     unregisterReceiver(mReceiver);
     super.onPause();
   }

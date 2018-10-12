@@ -18,38 +18,38 @@ import com.sunplus.toolbox.utils.BuildCheck;
 public class MessageDialogFragment extends DialogFragment {
   private static final String TAG = MessageDialogFragment.class.getSimpleName();
 
-  public static interface MessageDialogListener {
-    public void onMessageDialogResult(final MessageDialogFragment dialog, final int requestCode,
-                                      final String[] permissions, final boolean result);
+  public interface MessageDialogListener {
+    void onMessageDialogResult(final MessageDialogFragment dialog, final int requestCode,
+                               final String[] permissions, final boolean result);
   }
 
   public static MessageDialogFragment showDialog(final Activity parent, final int requestCode,
-                                                 final int id_title, final int id_message,
+                                                 final int idTitle, final int idMessage,
                                                  final String[] permissions) {
     final MessageDialogFragment dialog =
-        newInstance(requestCode, id_title, id_message, permissions);
+        newInstance(requestCode, idTitle, idMessage, permissions);
     dialog.show(parent.getFragmentManager(), TAG);
     return dialog;
   }
 
   public static MessageDialogFragment showDialog(final Fragment parent, final int requestCode,
-                                                 final int id_title, final int id_message,
+                                                 final int idTitle, final int idMessage,
                                                  final String[] permissions) {
     final MessageDialogFragment dialog =
-        newInstance(requestCode, id_title, id_message, permissions);
+        newInstance(requestCode, idTitle, idMessage, permissions);
     dialog.setTargetFragment(parent, parent.getId());
     dialog.show(parent.getFragmentManager(), TAG);
     return dialog;
   }
 
-  public static MessageDialogFragment newInstance(final int requestCode, final int id_title,
-                                                  final int id_message,
+  public static MessageDialogFragment newInstance(final int requestCode, final int idTitle,
+                                                  final int idMessage,
                                                   final String[] permissions) {
     final MessageDialogFragment fragment = new MessageDialogFragment();
     final Bundle args = new Bundle();
     args.putInt("requestCode", requestCode);
-    args.putInt("title", id_title);
-    args.putInt("message", id_message);
+    args.putInt("title", idTitle);
+    args.putInt("message", idMessage);
     args.putStringArray("permissions", permissions != null ? permissions : new String[] {});
     fragment.setArguments(args);
     return fragment;
@@ -76,7 +76,7 @@ public class MessageDialogFragment extends DialogFragment {
       }
     }
     if (mDialogListener == null) {
-      if (BuildCheck.isAndroid4_2()) {
+      if (BuildCheck.isAndroid42()) {
         final Fragment target = getParentFragment();
         if (target instanceof MessageDialogListener) {
           mDialogListener = (MessageDialogListener) target;
@@ -84,7 +84,6 @@ public class MessageDialogFragment extends DialogFragment {
       }
     }
     if (mDialogListener == null) {
-      //			Log.w(TAG, "caller activity/fragment must implement PermissionDetailDialogFragmentListener");
       throw new ClassCastException(activity.toString());
     }
   }
@@ -94,14 +93,14 @@ public class MessageDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(final Bundle savedInstanceState) {
     final Bundle args = savedInstanceState != null ? savedInstanceState : getArguments();
     final int requestCode = getArguments().getInt("requestCode");
-    final int id_title = getArguments().getInt("title");
-    final int id_message = getArguments().getInt("message");
+    final int idTitle = getArguments().getInt("title");
+    final int idMessage = getArguments().getInt("message");
     final String[] permissions = args.getStringArray("permissions");
 
     return new AlertDialog.Builder(getActivity())
         .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle(id_title)
-        .setMessage(id_message)
+        .setTitle(idTitle)
+        .setMessage(idMessage)
         .setPositiveButton(android.R.string.ok,
             new DialogInterface.OnClickListener() {
               @Override

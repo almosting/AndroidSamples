@@ -32,48 +32,49 @@ public class GLHelper {
     }
   }
 
-  public static int initTex(final int texTarget, final int filter_param) {
+  public static int initTex(final int texTarget, final int filterParam) {
     return initTex(texTarget, GLES20.GL_TEXTURE0,
-        filter_param, filter_param, GLES20.GL_CLAMP_TO_EDGE);
+        filterParam, filterParam, GLES20.GL_CLAMP_TO_EDGE);
   }
 
   public static int initTex(final int texTarget, final int texUnit,
-                            final int min_filter, final int mag_filter, final int wrap) {
+                            final int minFilter, final int magFilter, final int wrap) {
 
-    //		if (DEBUG) Log.v(TAG, "initTex:target=" + texTarget);
     final int[] tex = new int[1];
     GLES20.glActiveTexture(texUnit);
     GLES20.glGenTextures(1, tex, 0);
     GLES20.glBindTexture(texTarget, tex[0]);
     GLES20.glTexParameteri(texTarget, GLES20.GL_TEXTURE_WRAP_S, wrap);
     GLES20.glTexParameteri(texTarget, GLES20.GL_TEXTURE_WRAP_T, wrap);
-    GLES20.glTexParameteri(texTarget, GLES20.GL_TEXTURE_MIN_FILTER, min_filter);
-    GLES20.glTexParameteri(texTarget, GLES20.GL_TEXTURE_MAG_FILTER, mag_filter);
+    GLES20.glTexParameteri(texTarget, GLES20.GL_TEXTURE_MIN_FILTER, minFilter);
+    GLES20.glTexParameteri(texTarget, GLES20.GL_TEXTURE_MAG_FILTER, magFilter);
     return tex[0];
   }
 
   public static int[] initTexes(final int n,
-                                final int texTarget, final int filter_param) {
+                                final int texTarget, final int filterParam) {
 
     return initTexes(new int[n], texTarget,
-        filter_param, filter_param, GLES20.GL_CLAMP_TO_EDGE);
+        filterParam, filterParam, GLES20.GL_CLAMP_TO_EDGE);
   }
 
   public static int[] initTexes(@NonNull final int[] texIds,
-                                final int texTarget, final int filter_param) {
+                                final int texTarget, final int filterParam) {
 
     return initTexes(texIds, texTarget,
-        filter_param, filter_param, GLES20.GL_CLAMP_TO_EDGE);
+        filterParam, filterParam, GLES20.GL_CLAMP_TO_EDGE);
   }
 
   public static int[] initTexes(final int n,
-                                final int texTarget, final int min_filter, final int mag_filter, final int wrap) {
+                                final int texTarget, final int minFilter, final int magFilter,
+                                final int wrap) {
 
-    return initTexes(new int[n], texTarget, min_filter, mag_filter, wrap);
+    return initTexes(new int[n], texTarget, minFilter, magFilter, wrap);
   }
 
   public static int[] initTexes(@NonNull final int[] texIds,
-                                final int texTarget, final int min_filter, final int mag_filter, final int wrap) {
+                                final int texTarget, final int minFilter, final int magFilter,
+                                final int wrap) {
 
     int[] textureUnits = new int[1];
     GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_IMAGE_UNITS, textureUnits, 0);
@@ -82,29 +83,29 @@ public class GLHelper {
         ? textureUnits[0] : texIds.length;
     for (int i = 0; i < n; i++) {
       texIds[i] = GLHelper.initTex(texTarget, ShaderConst.TEX_NUMBERS[i],
-          min_filter, mag_filter, wrap);
+          minFilter, magFilter, wrap);
     }
     return texIds;
   }
 
   public static int[] initTexes(final int n,
                                 final int texTarget, final int texUnit,
-                                final int min_filter, final int mag_filter, final int wrap) {
+                                final int minFilter, final int magFilter, final int wrap) {
 
     return initTexes(new int[n], texTarget, texUnit,
-        min_filter, mag_filter, wrap);
+        minFilter, magFilter, wrap);
   }
 
   public static int[] initTexes(@NonNull final int[] texIds,
-                                final int texTarget, final int texUnit, final int filter_param) {
+                                final int texTarget, final int texUnit, final int filterParam) {
 
     return initTexes(texIds, texTarget, texUnit,
-        filter_param, filter_param, GLES20.GL_CLAMP_TO_EDGE);
+        filterParam, filterParam, GLES20.GL_CLAMP_TO_EDGE);
   }
 
   public static int[] initTexes(@NonNull final int[] texIds,
                                 final int texTarget, final int texUnit,
-                                final int min_filter, final int mag_filter, final int wrap) {
+                                final int minFilter, final int magFilter, final int wrap) {
 
     int[] textureUnits = new int[1];
     GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_IMAGE_UNITS, textureUnits, 0);
@@ -112,19 +113,17 @@ public class GLHelper {
         ? textureUnits[0] : texIds.length;
     for (int i = 0; i < n; i++) {
       texIds[i] = GLHelper.initTex(texTarget, texUnit,
-          min_filter, mag_filter, wrap);
+          minFilter, magFilter, wrap);
     }
     return texIds;
   }
 
   public static void deleteTex(final int hTex) {
-    //		if (DEBUG) Log.v(TAG, "deleteTex:");
-    final int[] tex = new int[] {hTex};
+    final int[] tex = new int[] { hTex };
     GLES20.glDeleteTextures(1, tex, 0);
   }
 
   public static void deleteTex(@NonNull final int[] tex) {
-    //		if (DEBUG) Log.v(TAG, "deleteTex:");
     GLES20.glDeleteTextures(tex.length, tex, 0);
   }
 
@@ -134,12 +133,13 @@ public class GLHelper {
 
   @SuppressLint("NewApi")
   @SuppressWarnings("deprecation")
-  public static int loadTextureFromResource(final Context context, final int resId, final Resources.Theme theme) {
+  public static int loadTextureFromResource(final Context context, final int resId,
+                                            final Resources.Theme theme) {
     // Create an empty, mutable bitmap
     final Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
     // get a canvas to paint over the bitmap
     final Canvas canvas = new Canvas(bitmap);
-    canvas.drawARGB(0,0,255,0);
+    canvas.drawARGB(0, 0, 255, 0);
 
     // get a background image from resources
     // note the image format must match the bitmap format
@@ -150,7 +150,7 @@ public class GLHelper {
       background = context.getResources().getDrawable(resId);
     }
     background.setBounds(0, 0, 256, 256);
-    background.draw(canvas); // draw the background to our bitmap
+    background.draw(canvas);
 
     final int[] textures = new int[1];
 
@@ -179,12 +179,12 @@ public class GLHelper {
     return textures[0];
   }
 
-  public static int createTextureWithTextContent (final String text) {
+  public static int createTextureWithTextContent(final String text) {
     // Create an empty, mutable bitmap
     final Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
     // get a canvas to paint over the bitmap
     final Canvas canvas = new Canvas(bitmap);
-    canvas.drawARGB(0,0,255,0);
+    canvas.drawARGB(0, 0, 255, 0);
 
     // Draw the text
     final Paint textPaint = new Paint();
@@ -211,32 +211,30 @@ public class GLHelper {
 
   /**
    * load, compile and link shader from Assets files
-   * @param context
-   * @param vss_asset source file name in Assets of vertex shader
-   * @param fss_asset source file name in Assets of fragment shader
-   * @return
+   *
+   * @param vssAsset source file name in Assets of vertex shader
    */
   public static int loadShader(@NonNull final Context context,
-                               final String vss_asset, final String fss_asset) {
+                               final String vssAsset) {
 
     int program = 0;
     try {
-      final String vss = AssetsHelper.loadString(context.getAssets(), vss_asset);
-      final String fss = AssetsHelper.loadString(context.getAssets(), vss_asset);
+      final String vss = AssetsHelper.loadString(context.getAssets(), vssAsset);
+      final String fss = AssetsHelper.loadString(context.getAssets(), vssAsset);
       program = loadShader(vss, fss);
     } catch (IOException e) {
+      e.printStackTrace();
     }
     return program;
   }
 
   /**
    * load, compile and link shader
+   *
    * @param vss source of vertex shader
    * @param fss source of fragment shader
-   * @return
    */
   public static int loadShader(final String vss, final String fss) {
-    //		if (DEBUG) Log.v(TAG, "loadShader:");
     final int[] compiled = new int[1];
     // 编译顶点着色器
     final int vs = loadShader(GLES20.GL_VERTEX_SHADER, vss);
@@ -312,7 +310,7 @@ public class GLHelper {
     Log.i(TAG, "renderer: " + GLES20.glGetString(GLES20.GL_RENDERER));
     Log.i(TAG, "version : " + GLES20.glGetString(GLES20.GL_VERSION));
 
-    if (BuildCheck.isAndroid4_3()) {
+    if (BuildCheck.isAndroid43()) {
       final int[] values = new int[1];
       GLES30.glGetIntegerv(GLES30.GL_MAJOR_VERSION, values, 0);
       final int majorVersion = values[0];

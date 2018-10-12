@@ -19,28 +19,28 @@ public abstract class MessageTask implements Runnable {
     int arg1;
     int arg2;
     Object obj;
-    int request_for_result;
+    int requestForResult;
     Object result;
 
     private Request() {
-      request = request_for_result = REQUEST_TASK_NON;
+      request = requestForResult = REQUEST_TASK_NON;
     }
 
     /**
-     * @param _request minus value is reserved internal use
+     * @param request minus value is reserved internal use
      */
-    public Request(final int _request, final int _arg1, final int _arg2, final Object _obj) {
-      request = _request;
-      arg1 = _arg1;
-      arg2 = _arg2;
-      obj = _obj;
-      request_for_result = REQUEST_TASK_NON;
+    public Request(final int request, final int arg1, final int arg2, final Object obj) {
+      this.request = request;
+      this.arg1 = arg1;
+      this.arg2 = arg2;
+      this.obj = obj;
+      requestForResult = REQUEST_TASK_NON;
     }
 
     public void setResult(final Object result) {
       synchronized (this) {
         this.result = result;
-        request = request_for_result = REQUEST_TASK_NON;
+        request = requestForResult = REQUEST_TASK_NON;
         notifyAll();
       }
     }
@@ -49,7 +49,7 @@ public abstract class MessageTask implements Runnable {
     public boolean equals(final Object o) {
       return (o instanceof Request)
           ? (request == ((Request) o).request)
-          && (request_for_result == ((Request) o).request_for_result)
+          && (requestForResult == ((Request) o).requestForResult)
           && (arg1 == ((Request) o).arg1)
           && (arg2 == ((Request) o).arg2)
           && (obj == ((Request) o).obj)
@@ -58,11 +58,11 @@ public abstract class MessageTask implements Runnable {
   }
 
   // minus values and zero are reserved for internal use
-  protected static final int REQUEST_TASK_NON = 0;
-  protected static final int REQUEST_TASK_RUN = -1;
-  protected static final int REQUEST_TASK_RUN_AND_WAIT = -2;
-  protected static final int REQUEST_TASK_START = -8;
-  protected static final int REQUEST_TASK_QUIT = -9;
+  private static final int REQUEST_TASK_NON = 0;
+  private static final int REQUEST_TASK_RUN = -1;
+  private static final int REQUEST_TASK_RUN_AND_WAIT = -2;
+  private static final int REQUEST_TASK_START = -8;
+  private static final int REQUEST_TASK_QUIT = -9;
 
   private final Object mSync = new Object();
   /** 池/队列大小，如果为-1则无限制 */
@@ -77,7 +77,7 @@ public abstract class MessageTask implements Runnable {
    * 无限大小的池和队列
    * 池创建为空
    */
-  public MessageTask() {
+  protected MessageTask() {
     mMaxRequest = -1;
     mRequestPool = new LinkedBlockingQueue<Request>();
     mRequestQueue = new LinkedBlockingDeque<Request>();
@@ -87,14 +87,16 @@ public abstract class MessageTask implements Runnable {
    * 构造函数
    * 无限大小的池和队列
    *
-   * @param init_num 　指定要合并的初始请求数
+   * @param initNum 　指定要合并的初始请求数
    */
-  public MessageTask(final int init_num) {
+  public MessageTask(final int initNum) {
     mMaxRequest = -1;
     mRequestPool = new LinkedBlockingQueue<Request>();
     mRequestQueue = new LinkedBlockingDeque<Request>();
-    for (int i = 0; i < init_num; i++) {
-      if (!mRequestPool.offer(new Request())) break;
+    for (int i = 0; i < initNum; i++) {
+      if (!mRequestPool.offer(new Request())) {
+        break;
+      }
     }
   }
 
@@ -102,14 +104,14 @@ public abstract class MessageTask implements Runnable {
    * 构造函数
    * 通过指定可以合并和排队的最大大小进行初始化
    *
-   * @param max_request 指定最大队列大小
-   * @param init_num 指定要池化的初始请求数，如果大于max_request则截断
+   * @param maxRequest 指定最大队列大小
+   * @param initNum 指定要池化的初始请求数，如果大于max_request则截断
    */
-  public MessageTask(final int max_request, final int init_num) {
-    mMaxRequest = max_request;
-    mRequestPool = new LinkedBlockingQueue<Request>(max_request);
-    mRequestQueue = new LinkedBlockingDeque<Request>(max_request);
-    for (int i = 0; i < init_num; i++) {
+  public MessageTask(final int maxRequest, final int initNum) {
+    mMaxRequest = maxRequest;
+    mRequestPool = new LinkedBlockingQueue<Request>(maxRequest);
+    mRequestQueue = new LinkedBlockingDeque<Request>(maxRequest);
+    for (int i = 0; i < initNum; i++) {
       if (!mRequestPool.offer(new Request())) {
         break;
       }
@@ -149,7 +151,6 @@ public abstract class MessageTask implements Runnable {
    * @return 返回true会终止消息处理循环
    */
   protected boolean onError(final Exception e) {
-    //		if (DEBUG) Log.w(TAG, e);
     return true;
   }
 
@@ -200,7 +201,9 @@ public abstract class MessageTask implements Runnable {
       if (mIsRunning) {
         mWorkerThread = Thread.currentThread();
         try {
-          onInit(request.arg1, request.arg2, request.obj);
+          if (request != null) {
+            onInit(request.arg1, request.arg2, request.obj);
+          }
         } catch (final Exception e) {
           Log.w(TAG, e);
           mIsRunning = false;
@@ -242,7 +245,7 @@ public abstract class MessageTask implements Runnable {
           case REQUEST_TASK_RUN_AND_WAIT:
             try {
               request.setResult(
-                  processRequest(request.request_for_result, request.arg1, request.arg2,
+                  processRequest(request.requestForResult, request.arg1, request.arg2,
                       request.obj));
             } catch (final TaskBreak e) {
               request.setResult(null);
@@ -266,7 +269,7 @@ public abstract class MessageTask implements Runnable {
             }
             break;
         }
-        request.request = request.request_for_result = REQUEST_TASK_NON;
+        request.request = request.requestForResult = REQUEST_TASK_NON;
         // 把它归还给池
         mRequestPool.offer(request);
       } catch (final InterruptedException e) {
@@ -317,7 +320,7 @@ public abstract class MessageTask implements Runnable {
    * @param request minus values and zero are reserved
    * @return Request
    */
-  protected Request obtain(final int request, final int arg1, final int arg2, final Object obj) {
+  private Request obtain(final int request, final int arg1, final int arg2, final Object obj) {
     Request req = mRequestPool.poll();
     if (req != null) {
       req.request = request;
@@ -386,7 +389,7 @@ public abstract class MessageTask implements Runnable {
    * @param request minus values and zero are reserved
    * @return true if success offer
    */
-  public boolean offer(final int request, final Object obj) {
+  private boolean offer(final int request, final Object obj) {
     return !mFinished && mIsRunning && mRequestQueue.offer(obtain(request, 0, 0, obj));
   }
 
@@ -408,10 +411,10 @@ public abstract class MessageTask implements Runnable {
     if (!mFinished && (request > REQUEST_TASK_NON)) {
       final Request req = obtain(REQUEST_TASK_RUN_AND_WAIT, arg1, arg2, obj);
       synchronized (req) {
-        req.request_for_result = request;
+        req.requestForResult = request;
         req.result = null;
         mRequestQueue.offer(req);
-        for (; mIsRunning && (req.request_for_result != REQUEST_TASK_NON); ) {
+        for (; mIsRunning && (req.requestForResult != REQUEST_TASK_NON); ) {
           try {
             req.wait(100);
           } catch (final InterruptedException e) {
@@ -436,7 +439,9 @@ public abstract class MessageTask implements Runnable {
 
   public void removeRequest(final Request request) {
     for (final Request req : mRequestQueue) {
-      if (!mIsRunning || mFinished) break;
+      if (!mIsRunning || mFinished) {
+        break;
+      }
       if (req.equals(request)) {
         mRequestQueue.remove(req);
         mRequestPool.offer(req);
@@ -446,7 +451,9 @@ public abstract class MessageTask implements Runnable {
 
   public void removeRequest(final int request) {
     for (final Request req : mRequestQueue) {
-      if (!mIsRunning || mFinished) break;
+      if (!mIsRunning || mFinished) {
+        break;
+      }
       if (req.request == request) {
         mRequestQueue.remove(req);
         mRequestPool.offer(req);

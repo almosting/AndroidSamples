@@ -9,7 +9,7 @@ import android.os.Build;
 
 public final class BuildCheck {
 
-  private static final boolean check(final int value) {
+  private static boolean check(final int value) {
     return (Build.VERSION.SDK_INT >= value);
   }
 
@@ -19,160 +19,6 @@ public final class BuildCheck {
    */
   public static boolean isCurrentDevelopment() {
     return (Build.VERSION.SDK_INT == Build.VERSION_CODES.CUR_DEVELOPMENT);
-  }
-
-  /**
-   * October 2008: The original, first, version of Android.  Yay!, API>=1
-   */
-  public static boolean isBase() {
-    return check(Build.VERSION_CODES.BASE);
-  }
-
-  /**
-   * February 2009: First Android update, officially called 1.1., API>=2
-   */
-  public static boolean isBase11() {
-    return check(Build.VERSION_CODES.BASE_1_1);
-  }
-
-  /**
-   * May 2009: Android 1.5., API>=3
-   */
-  public static boolean isCupcake() {
-    return check(Build.VERSION_CODES.CUPCAKE);
-  }
-
-  /**
-   * May 2009: Android 1.5., API>=3
-   */
-  public static boolean isAndroid1_5() {
-    return check(Build.VERSION_CODES.CUPCAKE);
-  }
-
-  /**
-   * September 2009: Android 1.6., API>=4
-   */
-  public static boolean isDonut() {
-    return check(Build.VERSION_CODES.DONUT);
-  }
-
-  /**
-   * September 2009: Android 1.6., API>=4
-   */
-  public static boolean isAndroid1_6() {
-    return check(Build.VERSION_CODES.DONUT);
-  }
-
-  /**
-   * November 2009: Android 2.0, API>=5
-   */
-  public static boolean isEclair() {
-    return check(Build.VERSION_CODES.ECLAIR);
-  }
-
-  /**
-   * November 2009: Android 2.0, API>=5
-   */
-  public static boolean isAndroid2_0() {
-    return check(Build.VERSION_CODES.ECLAIR);
-  }
-
-  /**
-   * December 2009: Android 2.0.1, API>=6
-   */
-  public static boolean isEclair01() {
-    return check(Build.VERSION_CODES.ECLAIR_0_1);
-  }
-
-  /**
-   * January 2010: Android 2.1, API>=7
-   */
-  public static boolean isEclairMR1() {
-    return check(Build.VERSION_CODES.ECLAIR_MR1);
-  }
-
-  /**
-   * June 2010: Android 2.2, API>=8
-   */
-  public static boolean isFroyo() {
-    return check(Build.VERSION_CODES.FROYO);
-  }
-
-  /**
-   * June 2010: Android 2.2, API>=8
-   */
-  public static boolean isAndroid2_2() {
-    return check(Build.VERSION_CODES.FROYO);
-  }
-
-  /**
-   * November 2010: Android 2.3, API>=9
-   */
-  public static boolean isGingerBread() {
-    return check(Build.VERSION_CODES.GINGERBREAD);
-  }
-
-  /**
-   * November 2010: Android 2.3, API>=9
-   */
-  public static boolean isAndroid2_3() {
-    return check(Build.VERSION_CODES.GINGERBREAD);
-  }
-
-  /**
-   * February 2011: Android 2.3.3., API>=10
-   */
-  public static boolean isGingerBreadMR1() {
-    return check(Build.VERSION_CODES.GINGERBREAD_MR1);
-  }
-
-  /**
-   * February 2011: Android 2.3.3., API>=10
-   */
-  public static boolean isAndroid2_3_3() {
-    return check(Build.VERSION_CODES.GINGERBREAD_MR1);
-  }
-
-  /**
-   * February 2011: Android 3.0., API>=11
-   */
-  public static boolean isHoneyComb() {
-    return check(Build.VERSION_CODES.HONEYCOMB);
-  }
-
-  /**
-   * February 2011: Android 3.0., API>=11
-   */
-  public static boolean isAndroid3() {
-    return check(Build.VERSION_CODES.HONEYCOMB);
-  }
-
-  /**
-   * May 2011: Android 3.1., API>=12
-   */
-  public static boolean isHoneyCombMR1() {
-    return check(Build.VERSION_CODES.HONEYCOMB_MR1);
-  }
-
-  /**
-   * May 2011: Android 3.1., API>=12
-   */
-  public static boolean isAndroid3_1() {
-    return check(Build.VERSION_CODES.HONEYCOMB_MR1);
-  }
-
-  /**
-   * June 2011: Android 3.2., API>=13
-   */
-  public static boolean isHoneyCombMR2() {
-    return check(Build.VERSION_CODES.HONEYCOMB_MR2);
-  }
-
-  /**
-   * June 2011: Android 3.2., API>=13
-   */
-  public static boolean isAndroid3_2() {
-    return check(Build.VERSION_CODES.HONEYCOMB_MR2);
   }
 
   /**
@@ -199,7 +45,7 @@ public final class BuildCheck {
   /**
    * December 2011: Android 4.0.3., API>=15
    */
-  public static boolean isAndroid4_0_3() {
+  public static boolean isAndroid403() {
     return check(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1);
   }
 
@@ -213,7 +59,7 @@ public final class BuildCheck {
   /**
    * June 2012: Android 4.1., API>=16
    */
-  public static boolean isAndroid4_1() {
+  public static boolean isAndroid41() {
     return check(Build.VERSION_CODES.JELLY_BEAN);
   }
 
@@ -227,7 +73,7 @@ public final class BuildCheck {
   /**
    * November 2012: Android 4.2, Moar jelly beans!, API>=17
    */
-  public static boolean isAndroid4_2() {
+  public static boolean isAndroid42() {
     return check(Build.VERSION_CODES.JELLY_BEAN_MR1);
   }
 
@@ -241,7 +87,7 @@ public final class BuildCheck {
   /**
    * July 2013: Android 4.3, the revenge of the beans., API>=18
    */
-  public static boolean isAndroid4_3() {
+  public static boolean isAndroid43() {
     return check(Build.VERSION_CODES.JELLY_BEAN_MR2);
   }
 
@@ -255,7 +101,7 @@ public final class BuildCheck {
   /**
    * October 2013: Android 4.4, KitKat, another tasty treat., API>=19
    */
-  public static boolean isAndroid4_4() {
+  public static boolean isAndroid44() {
     return check(Build.VERSION_CODES.KITKAT);
   }
 

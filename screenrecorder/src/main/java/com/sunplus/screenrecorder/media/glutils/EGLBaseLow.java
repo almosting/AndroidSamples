@@ -137,7 +137,7 @@ public class EGLBaseLow extends EGLBase {
 
       //			if (DEBUG) Log.v(TAG, "EglSurface:");
       mEglBase = eglBase;
-      if ((surface instanceof Surface) && !BuildCheck.isAndroid4_2()) {
+      if ((surface instanceof Surface) && !BuildCheck.isAndroid42()) {
         mEglSurface = mEglBase.createWindowSurface(
             new MySurfaceHolder((Surface) surface));
       } else if ((surface instanceof Surface)
@@ -206,7 +206,6 @@ public class EGLBaseLow extends EGLBase {
 
     @Override
     public void release() {
-      //			if (DEBUG) Log.v(TAG, "EglSurface:release:");
       mEglBase.makeDefault();
       mEglBase.destroyWindowSurface(mEglSurface);
       mEglSurface = EGL10.EGL_NO_SURFACE;
@@ -218,13 +217,11 @@ public class EGLBaseLow extends EGLBase {
                    final Context sharedContext, final boolean withDepthBuffer,
                    final int stencilBits, final boolean isRecordable) {
 
-    //		if (DEBUG) Log.v(TAG, "Constructor:");
     init(maxClientVersion, sharedContext, withDepthBuffer, stencilBits, isRecordable);
   }
 
   @Override
   public void release() {
-    //		if (DEBUG) Log.v(TAG, "release:");
     destroyContext();
     mContext = EGL_NO_CONTEXT;
     if (mEgl == null) {
@@ -242,7 +239,6 @@ public class EGLBaseLow extends EGLBase {
 
   @Override
   public EglSurface createFromSurface(final Object nativeWindow) {
-    //		if (DEBUG) Log.v(TAG, "createFromSurface:");
     final EglSurface eglSurface = new EglSurface(this, nativeWindow);
     eglSurface.makeCurrent();
     return eglSurface;
@@ -251,7 +247,6 @@ public class EGLBaseLow extends EGLBase {
 
   @Override
   public EglSurface createOffscreen(final int width, final int height) {
-    //		if (DEBUG) Log.v(TAG, "createOffscreen:");
     final EglSurface eglSurface = new EglSurface(this, width, height);
     eglSurface.makeCurrent();
     return eglSurface;
@@ -271,7 +266,6 @@ public class EGLBaseLow extends EGLBase {
 
   @Override
   public void makeDefault() {
-    //		if (DEBUG) Log.v(TAG, "makeDefault:");
     if (!mEgl.eglMakeCurrent(mEglDisplay,
         EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT)) {
 
@@ -299,12 +293,11 @@ public class EGLBaseLow extends EGLBase {
   }
 
 
-  private final void init(final int maxClientVersion,
-                          @Nullable Context sharedContext,
-                          final boolean withDepthBuffer, final int stencilBits,
-                          final boolean isRecordable) {
+  private void init(final int maxClientVersion,
+                    @Nullable Context sharedContext,
+                    final boolean withDepthBuffer, final int stencilBits,
+                    final boolean isRecordable) {
 
-    //		if (DEBUG) Log.v(TAG, "init:");
     sharedContext = (sharedContext != null) ? sharedContext : EGL_NO_CONTEXT;
     if (mEgl == null) {
       mEgl = (EGL10) EGLContext.getEGL();
@@ -326,7 +319,6 @@ public class EGLBaseLow extends EGLBase {
       if (config != null) {
         final EGLContext context = createContext(sharedContext, config, 3);
         if ((mEgl.eglGetError()) == EGL10.EGL_SUCCESS) {
-          //Log.d(TAG, "Got GLES 3 config");
           mEglConfig = new Config(config);
           mContext = new Context(context);
           mGlVersion = 3;
@@ -362,7 +354,7 @@ public class EGLBaseLow extends EGLBase {
         }
       }
     }
-    if ((mContext == null) || (mContext.eglContext == EGL10.EGL_NO_CONTEXT)) {
+    if (mContext.eglContext == EGL10.EGL_NO_CONTEXT) {
       config = getConfig(1, withDepthBuffer, stencilBits, isRecordable);
       if (config == null) {
         throw new RuntimeException("chooseConfig failed");
@@ -385,11 +377,7 @@ public class EGLBaseLow extends EGLBase {
   /**
    * change context to draw this window surface
    */
-  private final boolean makeCurrent(final EGLSurface surface) {
-    //		if (DEBUG) Log.v(TAG, "makeCurrent:");
-/*		if (mEglDisplay == null) {
-            if (DEBUG) Log.d(TAG, "makeCurrent:eglDisplay not initialized");
-        } */
+  private boolean makeCurrent(final EGLSurface surface) {
     if (surface == null || surface == EGL10.EGL_NO_SURFACE) {
       final int error = mEgl.eglGetError();
       if (error == EGL10.EGL_BAD_NATIVE_WINDOW) {
@@ -405,7 +393,7 @@ public class EGLBaseLow extends EGLBase {
     return true;
   }
 
-  private final int swap(final EGLSurface surface) {
+  private int swap(final EGLSurface surface) {
     //		if (DEBUG) Log.v(TAG, "swap:");
     if (!mEgl.eglSwapBuffers(mEglDisplay, surface)) {
       final int err = mEgl.eglGetError();
@@ -419,7 +407,7 @@ public class EGLBaseLow extends EGLBase {
    * swap rendering buffer with presentation time[ns]
    * presentationTimeNs is ignored on this method
    */
-  private final int swap(final EGLSurface surface, final long ignored) {
+  private int swap(final EGLSurface surface, final long ignored) {
     //		if (DEBUG) Log.v(TAG, "swap:");
     //		EGLExt.eglPresentationTimeANDROID(mEglDisplay, surface, presentationTimeNs);
     if (!mEgl.eglSwapBuffers(mEglDisplay, surface)) {
@@ -430,24 +418,20 @@ public class EGLBaseLow extends EGLBase {
     return EGL10.EGL_SUCCESS;
   }
 
-  private final EGLContext createContext(
+  private EGLContext createContext(
       @NonNull final Context sharedContext,
       final EGLConfig config, final int version) {
 
-    //		if (DEBUG) Log.v(TAG, "createContext:");
-
-    final int[] attrib_list = {
+    final int[] attributeList = {
         EGL_CONTEXT_CLIENT_VERSION, version,
         EGL10.EGL_NONE
     };
-    final EGLContext context = mEgl.eglCreateContext(
-        mEglDisplay, config, sharedContext.eglContext, attrib_list);
     //		checkEglError("eglCreateContext");
-    return context;
+    return mEgl.eglCreateContext(
+        mEglDisplay, config, sharedContext.eglContext, attributeList);
   }
 
   private void destroyContext() {
-    //		if (DEBUG) Log.v(TAG, "destroyContext:");
 
     if (!mEgl.eglDestroyContext(mEglDisplay, mContext.eglContext)) {
       Log.e("destroyContext", "display:" + mEglDisplay
@@ -457,7 +441,7 @@ public class EGLBaseLow extends EGLBase {
     mContext = EGL_NO_CONTEXT;
   }
 
-  private final int getSurfaceWidth(final EGLSurface surface) {
+  private int getSurfaceWidth(final EGLSurface surface) {
     final int[] value = new int[1];
     final boolean ret = mEgl.eglQuerySurface(mEglDisplay,
         surface, EGL10.EGL_WIDTH, value);
@@ -467,7 +451,7 @@ public class EGLBaseLow extends EGLBase {
     return value[0];
   }
 
-  private final int getSurfaceHeight(final EGLSurface surface) {
+  private int getSurfaceHeight(final EGLSurface surface) {
     final int[] value = new int[1];
     final boolean ret = mEgl.eglQuerySurface(mEglDisplay,
         surface, EGL10.EGL_HEIGHT, value);
@@ -480,16 +464,15 @@ public class EGLBaseLow extends EGLBase {
   /**
    * nativeWindow should be one of the SurfaceView, Surface, SurfaceHolder and SurfaceTexture
    */
-  private final EGLSurface createWindowSurface(final Object nativeWindow) {
-    //		if (DEBUG) Log.v(TAG, "createWindowSurface:nativeWindow=" + nativeWindow);
+  private EGLSurface createWindowSurface(final Object nativeWindow) {
 
-    final int[] surfaceAttribs = {
+    final int[] surfaceAttributes = {
         EGL10.EGL_NONE
     };
     EGLSurface result = null;
     try {
       result = mEgl.eglCreateWindowSurface(mEglDisplay,
-          mEglConfig.eglConfig, nativeWindow, surfaceAttribs);
+          mEglConfig.eglConfig, nativeWindow, surfaceAttributes);
       if (result == null || result == EGL10.EGL_NO_SURFACE) {
         final int error = mEgl.eglGetError();
         if (error == EGL10.EGL_BAD_NATIVE_WINDOW) {
@@ -509,9 +492,8 @@ public class EGLBaseLow extends EGLBase {
   /**
    * Creates an EGL surface associated with an offscreen buffer.
    */
-  private final EGLSurface createOffscreenSurface(final int width, final int height) {
-    //		if (DEBUG) Log.v(TAG, "createOffscreenSurface:");
-    final int[] surfaceAttribs = {
+  private EGLSurface createOffscreenSurface(final int width, final int height) {
+    final int[] surfaceAttributes = {
         EGL10.EGL_WIDTH, width,
         EGL10.EGL_HEIGHT, height,
         EGL10.EGL_NONE
@@ -520,7 +502,7 @@ public class EGLBaseLow extends EGLBase {
     EGLSurface result = null;
     try {
       result = mEgl.eglCreatePbufferSurface(mEglDisplay,
-          mEglConfig.eglConfig, surfaceAttribs);
+          mEglConfig.eglConfig, surfaceAttributes);
       checkEglError("eglCreatePbufferSurface");
       if (result == null) {
         throw new RuntimeException("surface was null");
@@ -532,7 +514,6 @@ public class EGLBaseLow extends EGLBase {
   }
 
   private void destroyWindowSurface(EGLSurface surface) {
-    //		if (DEBUG) Log.v(TAG, "destroySurface:");
 
     if (surface != EGL10.EGL_NO_SURFACE) {
       mEgl.eglMakeCurrent(mEglDisplay,
@@ -554,13 +535,13 @@ public class EGLBaseLow extends EGLBase {
                               final boolean hasDepthBuffer, final int stencilBits,
                               final boolean isRecordable) {
 
-    int renderableType = EGL_OPENGL_ES2_BIT;
+    int readableType = EGL_OPENGL_ES2_BIT;
     if (version >= 3) {
-      renderableType |= EGL_OPENGL_ES3_BIT_KHR;
+      readableType |= EGL_OPENGL_ES3_BIT_KHR;
     }
     //		final int swapBehavior = dirtyRegions ? EGL_SWAP_BEHAVIOR_PRESERVED_BIT : 0;
-    final int[] attribList = {
-        EGL10.EGL_RENDERABLE_TYPE, renderableType,
+    final int[] attributeList = {
+        EGL10.EGL_RENDERABLE_TYPE, readableType,
         EGL10.EGL_RED_SIZE, 8,
         EGL10.EGL_GREEN_SIZE, 8,
         EGL10.EGL_BLUE_SIZE, 8,
@@ -578,53 +559,53 @@ public class EGLBaseLow extends EGLBase {
     };
     int offset = 10;
     if (stencilBits > 0) {
-      attribList[offset++] = EGL10.EGL_STENCIL_SIZE;
-      attribList[offset++] = 8;
+      attributeList[offset++] = EGL10.EGL_STENCIL_SIZE;
+      attributeList[offset++] = 8;
     }
     if (hasDepthBuffer) {
-      attribList[offset++] = EGL10.EGL_DEPTH_SIZE;
-      attribList[offset++] = 16;
+      attributeList[offset++] = EGL10.EGL_DEPTH_SIZE;
+      attributeList[offset++] = 16;
     }
-    if (isRecordable && BuildCheck.isAndroid4_3()) {
+    if (isRecordable && BuildCheck.isAndroid43()) {
       // 如果是Surface输入MediaCodec
       // A-1000F（Android 4.1.2）不适用于此标志
-      attribList[offset++] = EGL_RECORDABLE_ANDROID;
-      attribList[offset++] = 1;
+      attributeList[offset++] = EGL_RECORDABLE_ANDROID;
+      attributeList[offset++] = 1;
     }
-    for (int i = attribList.length - 1; i >= offset; i--) {
-      attribList[i] = EGL10.EGL_NONE;
+    for (int i = attributeList.length - 1; i >= offset; i--) {
+      attributeList[i] = EGL10.EGL_NONE;
     }
-    EGLConfig config = internalGetConfig(attribList);
+    EGLConfig config = internalGetConfig(attributeList);
     if ((config == null) && (version == 2)) {
       if (isRecordable) {
         // 如果添加EGL_RECORDABLE_ANDROID，有些模型会失败，因此请将其删除
-        final int n = attribList.length;
+        final int n = attributeList.length;
         for (int i = 10; i < n - 1; i += 2) {
-          if (attribList[i] == EGL_RECORDABLE_ANDROID) {
+          if (attributeList[i] == EGL_RECORDABLE_ANDROID) {
             for (int j = i; j < n; j++) {
-              attribList[j] = EGL10.EGL_NONE;
+              attributeList[j] = EGL10.EGL_NONE;
             }
             break;
           }
         }
-        config = internalGetConfig(attribList);
+        config = internalGetConfig(attributeList);
       }
     }
     if (config == null) {
       Log.w(TAG, "try to fallback to RGB565");
-      attribList[3] = 5;
-      attribList[5] = 6;
-      attribList[7] = 5;
-      config = internalGetConfig(attribList);
+      attributeList[3] = 5;
+      attributeList[5] = 6;
+      attributeList[7] = 5;
+      config = internalGetConfig(attributeList);
     }
     return config;
   }
 
-  private EGLConfig internalGetConfig(final int[] attribList) {
+  private EGLConfig internalGetConfig(final int[] attributeList) {
     final EGLConfig[] configs = new EGLConfig[1];
     final int[] numConfigs = new int[1];
     if (!mEgl.eglChooseConfig(mEglDisplay,
-        attribList, configs, configs.length, numConfigs)) {
+        attributeList, configs, configs.length, numConfigs)) {
 
       return null;
     }

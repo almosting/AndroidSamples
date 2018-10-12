@@ -19,8 +19,10 @@ import java.util.List;
  * Email: fengweisb@gmail.com
  */
 public final class PermissionCheck {
-  public static final void dumpPermissions(final Context context) {
-    if (context == null) return;
+  public static void dumpPermissions(final Context context) {
+    if (context == null) {
+      return;
+    }
     try {
       final PackageManager pm = context.getPackageManager();
       final List<PermissionGroupInfo> list =
@@ -40,7 +42,9 @@ public final class PermissionCheck {
    */
   @SuppressLint("NewApi")
   public static boolean hasPermission(final Context context, final String permissionName) {
-    if (context == null) return false;
+    if (context == null) {
+      return false;
+    }
     boolean result = false;
     try {
       final int check;
