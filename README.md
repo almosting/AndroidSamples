@@ -1,2 +1,4 @@
-# AndroidTest
-Some samples for Android
+# AndroidSimpleArchitecture
+- Permission
+- Projection、帧率控制
+- Bluetooth
