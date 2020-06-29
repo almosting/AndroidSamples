@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sunplus.easypermissions">
+    package="com.almosting.easypermissions">
 
   <application>
     <activity
-        android:name=".AppSettingsDialogHolderActivity"
+        android:name="com.almosting.easypermissions.AppSettingsDialogHolderActivity"
         android:exported="true"
         android:label=""
         android:theme="@style/EasyPermissions.Transparent"/>

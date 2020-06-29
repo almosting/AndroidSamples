@@ -1,1 +1,1 @@
-include ':app', ':easypermissions', ':screenrecorder', ':toolbox'
+include ':screenrecorderdemo', ':easypermissions', ':screenrecorder'
