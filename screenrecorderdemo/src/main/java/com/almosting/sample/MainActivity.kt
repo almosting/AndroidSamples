@@ -7,15 +7,15 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.almosting.sample.R.id
-import com.almosting.sample.R.layout
-import com.almosting.sample.R.string
 import com.almosting.easypermissions.AfterPermissionGranted
 import com.almosting.easypermissions.AppSettingsDialog
 import com.almosting.easypermissions.AppSettingsDialog.Builder
 import com.almosting.easypermissions.EasyPermissions
 import com.almosting.easypermissions.EasyPermissions.PermissionCallbacks
 import com.almosting.easypermissions.EasyPermissions.RationaleCallbacks
+import com.almosting.sample.R.id
+import com.almosting.sample.R.layout
+import com.almosting.sample.R.string
 import java.util.Arrays
 
 class MainActivity : AppCompatActivity(), PermissionCallbacks,
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
         this,
         getString(string.rationale_location_contacts),
         RC_LOCATION_CONTACTS_PERM,
-        *LOCATION
+        LOCATION
       )
     }
   }
@@ -62,26 +62,26 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
         this,
         getString(string.rationale_camera),
         RC_CAMERA_PERM,
-        permission.CAMERA
+        arrayOf(permission.CAMERA)
       )
     }
   }
 
   private fun hasCameraPermission(): Boolean {
-    return EasyPermissions.hasPermissions(this, permission.CAMERA)
+    return EasyPermissions.hasPermissions(this, arrayOf(permission.CAMERA))
   }
 
   private fun hasLocationAndContactsPermissions(): Boolean {
-    return EasyPermissions.hasPermissions(this, *LOCATION)
+    return EasyPermissions.hasPermissions(this, LOCATION)
   }
 
   private fun hasStoragePermission(): Boolean {
-    return EasyPermissions.hasPermissions(this, permission.WRITE_EXTERNAL_STORAGE)
+    return EasyPermissions.hasPermissions(this, arrayOf(permission.WRITE_EXTERNAL_STORAGE))
   }
 
   override fun onPermissionsGranted(
     requestCode: Int,
-    perms: List<String>
+    perms: List<String?>
   ) {
     Log.d(
       TAG,
@@ -91,13 +91,13 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
 
   override fun onPermissionsDenied(
     requestCode: Int,
-    perms: List<String>
+    perms: List<String?>
   ) {
     Log.d(
       TAG,
       "onPermissionsDenied:" + requestCode + ":" + perms.size
     )
-    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms as List<String>)) {
       Builder(this).build().show()
     }
   }
@@ -105,6 +105,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
   override fun onRationaleAccepted(requestCode: Int) {
     Log.d(TAG, "onRationaleAccepted:$requestCode")
   }
+
 
   override fun onRequestPermissionsResult(
     requestCode: Int, permissions: Array<String>,
