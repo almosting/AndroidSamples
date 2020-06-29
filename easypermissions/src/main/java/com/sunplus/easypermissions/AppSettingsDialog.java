@@ -1,19 +1,20 @@
 package com.sunplus.easypermissions;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import android.text.TextUtils;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by w.feng on 2018/10/10
@@ -112,7 +113,7 @@ public class AppSettingsDialog implements Parcelable {
     startForResult(AppSettingsDialogHolderActivity.createShowDialogIntent(mContext, this));
   }
 
-  AlertDialog showDialog(DialogInterface.OnClickListener positiveListener,
+  @SuppressLint("ResourceType") AlertDialog showDialog(DialogInterface.OnClickListener positiveListener,
                          DialogInterface.OnClickListener negativeListener) {
     AlertDialog.Builder builder;
     if (mThemeResId > 0) {

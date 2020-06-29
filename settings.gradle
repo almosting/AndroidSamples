@@ -1,1 +1,1 @@
-include ':app', ':easypermissions', ':bluetoothhelper', ':screenrecorder', ':toolbox'
+include ':app', ':easypermissions', ':screenrecorder', ':toolbox'
