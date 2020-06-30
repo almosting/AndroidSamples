@@ -294,7 +294,7 @@ abstract class MediaEncoder internal constructor(
     LOOP@ while (mIsCapturing) {
       // get encoded data with maximum timeout duration of TIMEOUT_USEC(=10[msec])
       encoderStatus =
-        mMediaCodec!!.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC.toLong())
+        mMediaCodec!!.dequeueOutputBuffer(mBufferInfo!!, TIMEOUT_USEC.toLong())
       if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
         // wait 5 counts(=TIMEOUT_USEC x 5 = 50msec) until data/EOS come
         if (!mIsEOS) {
@@ -322,7 +322,7 @@ abstract class MediaEncoder internal constructor(
         }
         // get output format from codec and pass them to muxer
         // getOutputFormat should be called after INFO_OUTPUT_FORMAT_CHANGED otherwise crash.
-        val format = mMediaCodec!!.getOutputFormat()
+        val format = mMediaCodec!!.outputFormat
         mTrackIndex = muxer.addTrack(format)
         mMuxerStarted = true
         if (!muxer.start()) {

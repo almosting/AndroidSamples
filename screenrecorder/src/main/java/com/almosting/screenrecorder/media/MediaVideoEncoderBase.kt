@@ -73,7 +73,7 @@ abstract class MediaVideoEncoderBase internal constructor(
     if (DEBUG) {
       Log.i(TAG, "format: $format")
     }
-    mMediaCodec = MediaCodec.createEncoderByType(mime)
+    mMediaCodec = MediaCodec.createEncoderByType(mime!!)
     mMediaCodec!!.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
     return mMediaCodec!!.createInputSurface()
   }

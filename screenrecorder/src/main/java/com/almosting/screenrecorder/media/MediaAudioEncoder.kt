@@ -187,7 +187,7 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
   companion object {
     private val TAG: String? = "MediaAudioEncoder"
     private const val DEBUG = true
-    private val MIME_TYPE: String? = "audio/mp4a-latm"
+    private val MIME_TYPE: String = "audio/mp4a-latm"
     private const val SAMPLE_RATE = 44100
     private const val BIT_RATE = 64000
     const val SAMPLES_PER_FRAME = 1024

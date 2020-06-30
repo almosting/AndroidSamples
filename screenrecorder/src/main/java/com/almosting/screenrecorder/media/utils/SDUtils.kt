@@ -559,8 +559,8 @@ object SDUtils {
     requestCode: Int, treeUri: Uri?, flags: Int
   ): Uri? {
     return if (BuildCheck.isLollipop()) {
-      context.contentResolver.takePersistableUriPermission(treeUri, flags)
-      saveUri(context, getKey(requestCode), treeUri!!)
+      context.contentResolver.takePersistableUriPermission(treeUri!!, flags)
+      saveUri(context, getKey(requestCode), treeUri)
       treeUri
     } else {
       null

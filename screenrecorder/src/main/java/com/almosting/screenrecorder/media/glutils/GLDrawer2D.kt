@@ -49,12 +49,12 @@ class GLDrawer2D(
   }
 
   override fun setMvpMatrix(matrix: FloatArray?, offset: Int): IDrawer2D? {
-    System.arraycopy(matrix, offset, mMvpMatrix, 0, 16)
+    System.arraycopy(matrix!!, offset, mMvpMatrix, 0, 16)
     return this
   }
 
   override fun getMvpMatrix(matrix: FloatArray?, offset: Int) {
-    System.arraycopy(mMvpMatrix, 0, matrix, offset, 16)
+    System.arraycopy(mMvpMatrix!!, 0, matrix, offset, 16)
   }
 
   @Synchronized override fun draw(

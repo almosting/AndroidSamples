@@ -47,7 +47,7 @@ object EasyPermissions {
     requestCode: Int,   perms: Array<String>
   ) {
     requestPermissions(
-      Builder(host, requestCode, *perms)
+      Builder(host, requestCode, perms)
         .setRationale(rationale).build()
     )
   }

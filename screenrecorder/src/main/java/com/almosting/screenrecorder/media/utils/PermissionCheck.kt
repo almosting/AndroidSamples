@@ -47,7 +47,7 @@ object PermissionCheck {
     try {
       val check: Int
       check = if (BuildCheck.isMarshmallow()) {
-        context.checkSelfPermission(permissionName)
+        context.checkSelfPermission(permissionName!!)
       } else {
         val pm = context.packageManager
         pm.checkPermission(permissionName, context.packageName)

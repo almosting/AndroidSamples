@@ -4,7 +4,6 @@ import android.R
 import android.app.Activity
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
-import androidx.annotation.Size
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.fragment.app.Fragment
@@ -76,22 +75,22 @@ class PermissionRequest private constructor(
 
     constructor(
       activity: Activity, requestCode: Int,
-      @Size(min = 1) vararg perms: String
+      perms: Array<String>
     ) {
       mHelper =
         PermissionHelper.newInstance(activity)
       mRequestCode = requestCode
-      mPerms = perms as Array<String>
+      mPerms = perms
     }
 
     constructor(
       fragment: Fragment, requestCode: Int,
-      @Size(min = 1) vararg perms: String
+      perms: Array<String>
     ) {
       mHelper =
-        PermissionHelper.Companion.newInstance(fragment)
+        PermissionHelper.newInstance(fragment)
       mRequestCode = requestCode
-      mPerms = perms as Array<String>
+      mPerms = perms
     }
 
     fun setRationale(rationale: String?): Builder {

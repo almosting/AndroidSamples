@@ -8,6 +8,7 @@ import android.content.DialogInterface.OnClickListener
 import android.content.Intent
 import android.os.Parcel
 import android.os.Parcelable
+import android.os.Parcelable.Creator
 import android.text.TextUtils
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
@@ -239,12 +240,23 @@ class AppSettingsDialog : Parcelable {
     const val DEFAULT_SETTINGS_REQ_CODE = 16061
     const val EXTRA_APP_SETTINGS = "extra_app_settings"
 
+    @JvmField val CREATOR = object : Creator<AppSettingsDialog> {
+
+      override fun createFromParcel(parcel: Parcel): AppSettingsDialog {
+        return AppSettingsDialog(parcel)
+      }
+
+      override fun newArray(size: Int): Array<AppSettingsDialog?> {
+        return arrayOfNulls(size)
+      }
+    }
+
     fun fromIntent(
       intent: Intent,
       activity: Activity
     ): AppSettingsDialog {
       val dialog: AppSettingsDialog =
-        intent.getParcelableExtra(EXTRA_APP_SETTINGS)
+        intent.getParcelableExtra(EXTRA_APP_SETTINGS)!!
       dialog.setActivityOrFragment(activity)
       return dialog
     }

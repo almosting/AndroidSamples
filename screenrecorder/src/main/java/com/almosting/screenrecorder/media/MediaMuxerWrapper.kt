@@ -136,7 +136,7 @@ class MediaMuxerWrapper(context: Context?, ext: String?) {
 
   @Synchronized fun addTrack(format: MediaFormat?): Int {
     check(!mIsStarted) { "muxer already started" }
-    val trackIx = mMediaMuxer!!.addTrack(format)
+    val trackIx = mMediaMuxer!!.addTrack(format!!)
     if (DEBUG) {
       Log.i(
         ContentValues.TAG,
@@ -151,7 +151,7 @@ class MediaMuxerWrapper(context: Context?, ext: String?) {
     bufferInfo: BufferInfo?
   ) {
     if (mStartedCount > 0) {
-      mMediaMuxer!!.writeSampleData(trackIndex, byteBuf, bufferInfo)
+      mMediaMuxer!!.writeSampleData(trackIndex, byteBuf!!, bufferInfo!!)
     }
   }
 
@@ -175,7 +175,7 @@ class MediaMuxerWrapper(context: Context?, ext: String?) {
       throw RuntimeException("This app has no permission of writing external storage")
     }
     mMediaMuxer = MediaMuxer(
-      mOutputPath,
+      mOutputPath!!,
       OutputFormat.MUXER_OUTPUT_MPEG_4
     )
     mStartedCount = 0

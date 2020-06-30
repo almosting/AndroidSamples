@@ -12,17 +12,17 @@ import androidx.fragment.app.FragmentManager
 class FragmentActivityPermissionHelper(host: FragmentActivity) :
   BaseSupportPermissionHelper<FragmentActivity>(host) {
   override val supportFragmentManager: FragmentManager
-    get() = host!!.supportFragmentManager
+    get() = host.supportFragmentManager
 
   override fun directRequestPermissions(
     requestCode: Int,
     vararg perms: String
   ) {
-    ActivityCompat.requestPermissions(host!!, perms, requestCode)
+    ActivityCompat.requestPermissions(host, perms, requestCode)
   }
 
   override fun shouldShowRequestPermissionRationale(perm: String): Boolean {
-    return ActivityCompat.shouldShowRequestPermissionRationale(host!!, perm)
+    return ActivityCompat.shouldShowRequestPermissionRationale(host, perm)
   }
 
   override val context: Context?

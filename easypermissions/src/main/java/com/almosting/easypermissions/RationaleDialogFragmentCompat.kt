@@ -55,9 +55,9 @@ class RationaleDialogFragmentCompat : AppCompatDialogFragment() {
     isCancelable = false
 
     // Get config from arguments, create click listener
-    val config = RationaleDialogConfig(arguments)
+    val config = arguments?.let { RationaleDialogConfig(it) }
     val clickListener =
-      RationaleDialogClickListener(this, config, mPermissionCallbacks, mRationaleCallbacks)
+      RationaleDialogClickListener(this, config!!, mPermissionCallbacks, mRationaleCallbacks)
 
     // Create an AlertDialog
     return config.createSupportDialog(context, clickListener)

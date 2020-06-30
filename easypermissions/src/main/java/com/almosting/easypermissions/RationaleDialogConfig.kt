@@ -35,13 +35,13 @@ class RationaleDialogConfig {
     this.permissions = permissions
   }
 
-  internal constructor(bundle: Bundle?) {
-    positiveButton = bundle!!.getString(KEY_POSITIVE_BUTTON)
-    negativeButton = bundle.getString(KEY_NEGATIVE_BUTTON)
-    rationaleMsg = bundle.getString(KEY_RATIONALE_MESSAGE)
+  internal constructor(bundle: Bundle) {
+    positiveButton = bundle.getString(KEY_POSITIVE_BUTTON)!!
+    negativeButton = bundle.getString(KEY_NEGATIVE_BUTTON)!!
+    rationaleMsg = bundle.getString(KEY_RATIONALE_MESSAGE)!!
     theme = bundle.getInt(KEY_THEME)
     requestCode = bundle.getInt(KEY_REQUEST_CODE)
-    permissions = bundle.getStringArray(KEY_PERMISSIONS)
+    permissions = bundle.getStringArray(KEY_PERMISSIONS)!!
   }
 
   fun toBundle(): Bundle {

@@ -194,7 +194,7 @@ class TextureOffscreen(
    * get copy of texture matrix
    */
   fun getTexMatrix(): FloatArray? {
-    System.arraycopy(mTexMatrix, 0, mResultMatrix, 0, 16)
+    System.arraycopy(mTexMatrix!!, 0, mResultMatrix, 0, 16)
     return mResultMatrix
   }
 
@@ -210,7 +210,7 @@ class TextureOffscreen(
    * 由于我们没有检查过该区域，因此我们必须从偏移位置预留16个或更多
    */
   fun getTexMatrix(matrix: FloatArray?, offset: Int) {
-    System.arraycopy(mTexMatrix, 0, matrix, offset, mTexMatrix!!.size)
+    System.arraycopy(mTexMatrix!!, 0, matrix, offset, mTexMatrix!!.size)
   }
 
   /**

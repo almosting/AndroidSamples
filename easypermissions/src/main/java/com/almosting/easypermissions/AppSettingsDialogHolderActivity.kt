@@ -13,7 +13,6 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.almosting.easypermissions.AppSettingsDialog
 
 /**
  * Created by w.feng on 2018/10/10
@@ -27,7 +26,7 @@ class AppSettingsDialogHolderActivity : AppCompatActivity(),
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val appSettingsDialog: AppSettingsDialog =
-      AppSettingsDialog.Companion.fromIntent(intent, this)
+      AppSettingsDialog.fromIntent(intent, this)
     mIntentFlags = appSettingsDialog.intentFlags
     mDialog = appSettingsDialog.showDialog(this, this)
   }
@@ -72,7 +71,7 @@ class AppSettingsDialogHolderActivity : AppCompatActivity(),
     ): Intent {
       val intent =
         Intent(context, AppSettingsDialogHolderActivity::class.java)
-      intent.putExtra(AppSettingsDialog.Companion.EXTRA_APP_SETTINGS, dialog)
+      intent.putExtra(AppSettingsDialog.EXTRA_APP_SETTINGS, dialog)
       return intent
     }
   }

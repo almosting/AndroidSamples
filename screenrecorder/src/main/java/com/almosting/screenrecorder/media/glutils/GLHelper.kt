@@ -234,7 +234,7 @@ object GLHelper {
     textPaint.isAntiAlias = true
     textPaint.setARGB(0xff, 0xff, 0xff, 0xff)
     // draw the text centered
-    canvas.drawText(text, 16f, 112f, textPaint)
+    canvas.drawText(text!!, 16f, 112f, textPaint)
     val texture = initTex(
       GLES20.GL_TEXTURE_2D,
       GLES20.GL_TEXTURE0,

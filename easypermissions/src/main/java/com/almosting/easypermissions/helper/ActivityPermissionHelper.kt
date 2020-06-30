@@ -32,7 +32,7 @@ class ActivityPermissionHelper internal constructor(host: Activity) :
     perms: Array<String>
   ) {
     val fm = host.fragmentManager
-    val fragment = fm.findFragmentByTag(RationaleDialogFragment.Companion.TAG)
+    val fragment = fm.findFragmentByTag(RationaleDialogFragment.TAG)
     if (fragment is RationaleDialogFragment) {
       Log.d(
         TAG,
