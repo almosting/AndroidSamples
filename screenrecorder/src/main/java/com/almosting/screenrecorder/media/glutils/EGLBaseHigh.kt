@@ -364,7 +364,7 @@ class EGLBaseHigh(
     if (!ret) {
       mSurfaceDimension?.set(0, 0)
     }
-    return mSurfaceDimension!!.get(0)
+    return mSurfaceDimension!![0]
   }
 
   private fun getSurfaceHeight(surface: EGLSurface?): Int {
@@ -375,7 +375,7 @@ class EGLBaseHigh(
     if (!ret) {
       mSurfaceDimension?.set(1, 0)
     }
-    return mSurfaceDimension!!.get(1)
+    return mSurfaceDimension!![1]
   }
 
   /**
@@ -386,7 +386,7 @@ class EGLBaseHigh(
     val surfaceAttribs = intArrayOf(
       EGL14.EGL_NONE
     )
-    var result: EGLSurface? = null
+    var result: EGLSurface?
     try {
       result = EGL14.eglCreateWindowSurface(
         mEglDisplay,
@@ -439,7 +439,6 @@ class EGLBaseHigh(
 
   private fun destroyWindowSurface(surface: EGLSurface?) {
     //		if (DEBUG) Log.v(TAG, "destroySurface:");
-    var surface = surface
     if (surface !== EGL14.EGL_NO_SURFACE) {
       EGL14.eglMakeCurrent(
         mEglDisplay,
@@ -449,8 +448,6 @@ class EGLBaseHigh(
       )
       EGL14.eglDestroySurface(mEglDisplay, surface)
     }
-    surface = EGL14.EGL_NO_SURFACE
-    //		if (DEBUG) Log.v(TAG, "destroySurface:finished");
   }
 
   private fun checkEglError(msg: String?) {

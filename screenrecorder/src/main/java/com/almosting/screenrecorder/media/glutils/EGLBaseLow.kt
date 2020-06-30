@@ -474,7 +474,6 @@ class EGLBaseLow(
   }
 
   private fun destroyWindowSurface(surface: EGLSurface?) {
-    var surface = surface
     if (surface !== EGL10.EGL_NO_SURFACE) {
       mEgl!!.eglMakeCurrent(
         mEglDisplay,
@@ -484,8 +483,6 @@ class EGLBaseLow(
       )
       mEgl!!.eglDestroySurface(mEglDisplay, surface)
     }
-    surface = EGL10.EGL_NO_SURFACE
-    //		if (DEBUG) Log.v(TAG, "destroySurface:finished");
   }
 
   private fun checkEglError(msg: String?) {

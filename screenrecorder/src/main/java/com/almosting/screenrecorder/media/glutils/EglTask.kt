@@ -37,24 +37,24 @@ import com.almosting.toolbox.utils.MessageTask
   }
 
   /**
-   * @param flags
-   * @param maxClientVersion
+   * @param arg1
+   * @param arg2
    * @param sharedContext
    */
   override fun onInit(
-    flags: Int,
-    maxClientVersion: Int, sharedContext: Any?
+    arg1: Int,
+    arg2: Int, sharedContext: Any?
   ) {
     if (sharedContext == null
       || sharedContext is IContext
     ) {
       val stencilBits =
-        if (flags and EGL_FLAG_STENCIL_1BIT == EGL_FLAG_STENCIL_1BIT) 1 else if (flags and EGL_FLAG_STENCIL_8BIT == EGL_FLAG_STENCIL_8BIT) 8 else 0
-      mEgl = EGLBase.Companion.createFrom(
-        maxClientVersion, sharedContext as IContext?,
-        flags and EGL_FLAG_DEPTH_BUFFER == EGL_FLAG_DEPTH_BUFFER,
+        if (arg1 and EGL_FLAG_STENCIL_1BIT == EGL_FLAG_STENCIL_1BIT) 1 else if (arg1 and EGL_FLAG_STENCIL_8BIT == EGL_FLAG_STENCIL_8BIT) 8 else 0
+      mEgl = EGLBase.createFrom(
+        arg2, sharedContext as IContext?,
+        arg1 and EGL_FLAG_DEPTH_BUFFER == EGL_FLAG_DEPTH_BUFFER,
         stencilBits,
-        flags and EGL_FLAG_RECORDABLE == EGL_FLAG_RECORDABLE
+        arg1 and EGL_FLAG_RECORDABLE == EGL_FLAG_RECORDABLE
       )
     }
     if (mEgl == null) {
