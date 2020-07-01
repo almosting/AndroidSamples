@@ -21,9 +21,7 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
   MediaEncoder(muxer, callback) {
   private var mAudioThread: AudioThread? = null
   @Throws(IOException::class) override fun prepare() {
-    if (DEBUG) {
-      Log.v(TAG, "prepare:")
-    }
+    Log.v(TAG, "prepare:")
     mTrackIndex = -1
     mIsEOS = false
     mMuxerStarted = mIsEOS
@@ -37,12 +35,10 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
       )
       return
     }
-    if (DEBUG) {
-      Log.i(
-        TAG,
-        "selected codec: " + audioCodecInfo.name
-      )
-    }
+    Log.i(
+      TAG,
+      "selected codec: " + audioCodecInfo.name
+    )
     val audioFormat = MediaFormat.createAudioFormat(
       MIME_TYPE,
       SAMPLE_RATE,
@@ -63,16 +59,12 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
     audioFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1)
     //		audioFormat.setLong(MediaFormat.KEY_MAX_INPUT_SIZE, inputFile.length());
     //      audioFormat.setLong(MediaFormat.KEY_DURATION, (long)durationInMs );
-    if (DEBUG) {
-      Log.i(TAG, "format: $audioFormat")
-    }
+    Log.i(TAG, "format: $audioFormat")
     mMediaCodec =
       MediaCodec.createEncoderByType(MIME_TYPE)
     mMediaCodec!!.configure(audioFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
     mMediaCodec!!.start()
-    if (DEBUG) {
-      Log.i(TAG, "prepare finishing")
-    }
+    Log.i(TAG, "prepare finishing")
     if (mListener != null) {
       try {
         mListener.onPrepared(this)
@@ -140,12 +132,10 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
         if (audioRecord != null) {
           try {
             if (mIsCapturing) {
-              if (DEBUG) {
-                Log.v(
-                  TAG,
-                  "AudioThread:start audio recording"
-                )
-              }
+              Log.v(
+                TAG,
+                "AudioThread:start audio recording"
+              )
               val buf =
                 ByteBuffer.allocateDirect(SAMPLES_PER_FRAME)
               var readBytes: Int
@@ -187,7 +177,7 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
   companion object {
     private val TAG: String? = "MediaAudioEncoder"
     private const val DEBUG = true
-    private val MIME_TYPE: String = "audio/mp4a-latm"
+    private const val MIME_TYPE: String = "audio/mp4a-latm"
     private const val SAMPLE_RATE = 44100
     private const val BIT_RATE = 64000
     const val SAMPLES_PER_FRAME = 1024
@@ -205,10 +195,8 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
      * @param mimeType
      * @return
      */
-    private fun selectAudioCodec(mimeType: String?): MediaCodecInfo? {
-      if (DEBUG) {
-        Log.v(TAG, "selectAudioCodec:")
-      }
+    private fun selectAudioCodec(mimeType: String): MediaCodecInfo? {
+      Log.v(TAG, "selectAudioCodec:")
       var result: MediaCodecInfo? = null
       // get the list of available codecs
       val numCodecs = MediaCodecList.getCodecCount()
@@ -220,12 +208,10 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper?, callback: MediaEncoderCallbac
         }
         val types = codecInfo.supportedTypes
         for (type in types) {
-          if (DEBUG) {
-            Log.i(
-              TAG,
-              "supportedType:" + codecInfo.name + ",MIME=" + type
-            )
-          }
+          Log.i(
+            TAG,
+            "supportedType:" + codecInfo.name + ",MIME=" + type
+          )
           if (type.equals(mimeType, ignoreCase = true)) {
             result = codecInfo
             break@LOOP

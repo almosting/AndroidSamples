@@ -18,8 +18,7 @@ import com.almosting.sample.R.layout
 import com.almosting.sample.R.string
 import java.util.Arrays
 
-class MainActivity : AppCompatActivity(), PermissionCallbacks,
-  RationaleCallbacks {
+class MainActivity : AppCompatActivity(), PermissionCallbacks, RationaleCallbacks {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_main)
@@ -50,8 +49,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
   @AfterPermissionGranted(RC_CAMERA_PERM)
   private fun cameraTask() {
     if (hasCameraPermission()) {
-      Toast.makeText(this, "TODO: Camera things", Toast.LENGTH_LONG)
-        .show()
+      Toast.makeText(this, "TODO: Camera things", Toast.LENGTH_LONG).show()
     } else {
       Toast.makeText(
         this,
@@ -81,23 +79,17 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
 
   override fun onPermissionsGranted(
     requestCode: Int,
-    perms: List<String?>
+    perms: List<String>
   ) {
-    Log.d(
-      TAG,
-      "onPermissionsGranted:" + requestCode + ":" + perms.size
-    )
+    Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size)
   }
 
   override fun onPermissionsDenied(
     requestCode: Int,
-    perms: List<String?>
+    perms: List<String>
   ) {
-    Log.d(
-      TAG,
-      "onPermissionsDenied:" + requestCode + ":" + perms.size
-    )
-    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms as List<String>)) {
+    Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size)
+    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
       Builder(this).build().show()
     }
   }
@@ -112,10 +104,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
     grantResults: IntArray
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    Log.d(
-      TAG,
-      "onRequestPermissionsResult: " + requestCode + ":" + Arrays.toString(grantResults)
-    )
+    Log.d(TAG, "onRequestPermissionsResult: " + requestCode + ":" + Arrays.toString(grantResults))
   }
 
   override fun onRationaleDenied(requestCode: Int) {
@@ -141,8 +130,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks,
           if (hasLocationAndContactsPermissions()) yes else no
         ),
         Toast.LENGTH_LONG
-      )
-        .show()
+      ).show()
     }
   }
 

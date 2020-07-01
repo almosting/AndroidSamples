@@ -53,8 +53,7 @@ class MessageDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
-    val args =
-      savedInstanceState ?: arguments
+    val args = savedInstanceState
     val requestCode = arguments.getInt("requestCode")
     val idTitle = arguments.getInt("title")
     val idMessage = arguments.getInt("message")
@@ -63,9 +62,7 @@ class MessageDialogFragment : DialogFragment() {
       .setIcon(drawable.ic_dialog_alert)
       .setTitle(idTitle)
       .setMessage(idMessage)
-      .setPositiveButton(
-        string.ok
-      ) { dialog, whichButton ->
+      .setPositiveButton(string.ok) { _, _ ->
         try {
           mDialogListener!!.onMessageDialogResult(
             this@MessageDialogFragment, requestCode,
@@ -77,7 +74,7 @@ class MessageDialogFragment : DialogFragment() {
       }
       .setNegativeButton(
         string.cancel
-      ) { dialog, whichButton ->
+      ) { _, _ ->
         try {
           mDialogListener!!.onMessageDialogResult(
             this@MessageDialogFragment, requestCode,

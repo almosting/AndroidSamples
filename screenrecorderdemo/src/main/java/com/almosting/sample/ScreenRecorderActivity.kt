@@ -25,6 +25,7 @@ import com.almosting.sample.service.ScreenRecorderService
 import com.almosting.toolbox.utils.BuildCheck
 import com.almosting.toolbox.utils.PermissionCheck
 import java.lang.ref.WeakReference
+import kotlin.math.min
 
 /**
  * @author w.feng
@@ -103,8 +104,9 @@ open class ScreenRecorderActivity : AppCompatActivity(),
               val intent = Intent(
                 this@ScreenRecorderActivity,
                 ScreenRecorderService::class.java
-              )
-              intent.action = ScreenRecorderService.ACTION_STOP
+              ).apply {
+                action = ScreenRecorderService.ACTION_STOP
+              }
               startService(intent)
             }
           } else {
@@ -117,13 +119,15 @@ open class ScreenRecorderActivity : AppCompatActivity(),
           }
           id.pause_button -> if (isChecked) {
             val intent =
-              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java)
-            intent.action = ScreenRecorderService.ACTION_PAUSE
+              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java).apply {
+                action = ScreenRecorderService.ACTION_PAUSE
+              }
             startService(intent)
           } else {
             val intent =
-              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java)
-            intent.action = ScreenRecorderService.ACTION_RESUME
+              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java).apply {
+                action = ScreenRecorderService.ACTION_RESUME
+              }
             startService(intent)
           }
           else -> {
@@ -133,31 +137,22 @@ open class ScreenRecorderActivity : AppCompatActivity(),
     }
 
   private fun queryRecordingStatus() {
-    if (DEBUG) {
-      Log.v(TAG, "queryRecording:")
+    val intent = Intent(this, ScreenRecorderService::class.java).apply {
+      action = ScreenRecorderService.ACTION_QUERY_STATUS
     }
-    val intent =
-      Intent(this, ScreenRecorderService::class.java)
-    intent.action = ScreenRecorderService.ACTION_QUERY_STATUS
     startService(intent)
   }
 
   private fun startScreenRecorder(resultCode: Int, data: Intent?) {
-    val intent =
-      Intent(this, ScreenRecorderService::class.java)
-    intent.action = ScreenRecorderService.ACTION_START
-    intent.putExtra(ScreenRecorderService.EXTRA_RESULT_CODE, resultCode)
-    intent.putExtras(data!!)
+    val intent = Intent(this, ScreenRecorderService::class.java).apply {
+      action = ScreenRecorderService.ACTION_START
+      putExtra(ScreenRecorderService.EXTRA_RESULT_CODE, resultCode)
+      putExtras(data!!)
+    }
     startService(intent)
   }
 
   private fun updateRecording(isRecording: Boolean, isPausing: Boolean) {
-    if (DEBUG) {
-      Log.v(
-        TAG,
-        "updateRecording:isRecording=$isRecording,isPausing=$isPausing"
-      )
-    }
     mRecordButton!!.setOnCheckedChangeListener(null)
     mPauseButton!!.setOnCheckedChangeListener(null)
     try {
@@ -172,14 +167,11 @@ open class ScreenRecorderActivity : AppCompatActivity(),
 
   private class MyBroadcastReceiver(parent: ScreenRecorderActivity) :
     BroadcastReceiver() {
-    private val mWeakParent: WeakReference<ScreenRecorderActivity>
+    private val mWeakParent: WeakReference<ScreenRecorderActivity> = WeakReference(parent)
     override fun onReceive(
       context: Context,
       intent: Intent
     ) {
-      if (DEBUG) {
-        Log.v(TAG, "onReceive:$intent")
-      }
       val action = intent.action
       if (ScreenRecorderService.ACTION_QUERY_STATUS_RESULT == action) {
         val isRecording =
@@ -189,10 +181,6 @@ open class ScreenRecorderActivity : AppCompatActivity(),
         val parent = mWeakParent.get()
         parent?.updateRecording(isRecording, isPausing)
       }
-    }
-
-    init {
-      mWeakParent = WeakReference(parent)
     }
   }
   //================================================================================
@@ -229,7 +217,7 @@ open class ScreenRecorderActivity : AppCompatActivity(),
     grantResults: IntArray
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    val n = Math.min(permissions.size, grantResults.size)
+    val n = min(permissions.size, grantResults.size)
     for (i in 0 until n) {
       checkPermissionResult(
         requestCode, permissions[i],
@@ -242,7 +230,7 @@ open class ScreenRecorderActivity : AppCompatActivity(),
    * check the result of permission request
    * if app still has no permission, just show Toast
    */
-  protected fun checkPermissionResult(
+  private fun checkPermissionResult(
     requestCode: Int, permission: String?,
     result: Boolean
   ) {

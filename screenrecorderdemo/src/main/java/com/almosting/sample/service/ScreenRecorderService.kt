@@ -32,7 +32,6 @@ import java.io.IOException
  */
 class ScreenRecorderService : Service() {
   companion object {
-    private const val DEBUG = true
     private const val TAG = "ScreenRecorderService"
     private const val APP_DIR_NAME = "ScreenRecorder"
     private const val BASE = "com.fengwei23.service.ScreenRecorderService."
@@ -59,15 +58,11 @@ class ScreenRecorderService : Service() {
      */
     private val mMediaEncoderListener: MediaEncoderCallback = object : MediaEncoderCallback {
       override fun onPrepared(encoder: MediaEncoder?) {
-        if (DEBUG) {
-          Log.v(TAG, "onPrepared:encoder=$encoder")
-        }
+        Log.v(TAG, "onPrepared:encoder=$encoder")
       }
 
       override fun onStopped(encoder: MediaEncoder?) {
-        if (DEBUG) {
-          Log.v(TAG, "onStopped:encoder=$encoder")
-        }
+        Log.v(TAG, "onStopped:encoder=$encoder")
       }
     }
 
@@ -76,13 +71,11 @@ class ScreenRecorderService : Service() {
     }
   }
 
-  private var mMediaProjectionManager: MediaProjectionManager? = null
-  private var mNotificationManager: NotificationManager? = null
+  private lateinit var mMediaProjectionManager: MediaProjectionManager
+  private lateinit var mNotificationManager: NotificationManager
   override fun onCreate() {
     super.onCreate()
-    if (DEBUG) {
-      Log.v(TAG, "onCreate:")
-    }
+    Log.v(TAG, "onCreate:")
     if (isLollipop()) {
       mMediaProjectionManager =
         getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
@@ -93,9 +86,7 @@ class ScreenRecorderService : Service() {
   }
 
   override fun onDestroy() {
-    if (DEBUG) {
-      Log.v(TAG, "onDestroy:")
-    }
+    Log.v(TAG, "onDestroy:")
     super.onDestroy()
   }
 
@@ -108,30 +99,38 @@ class ScreenRecorderService : Service() {
     flags: Int,
     startId: Int
   ): Int {
-    if (DEBUG) {
-      Log.v(TAG, "onStartCommand:intent=$intent")
-    }
+    Log.v(TAG, "onStartCommand:intent=$intent")
     var result = START_STICKY
-    val action = intent?.action
-    if (ACTION_START == action) {
-      startScreenRecord(intent)
-      updateStatus()
-    } else if (ACTION_STOP == action || TextUtils.isEmpty(
-        action
-      )
-    ) {
-      stopScreenRecord()
-      updateStatus()
-      result = START_NOT_STICKY
-    } else if (ACTION_QUERY_STATUS == action) {
-      if (!updateStatus()) {
-        stopSelf()
+    when (val action = intent.action) {
+      ACTION_START -> {
+        startScreenRecord(intent)
+        updateStatus()
+      }
+      ACTION_QUERY_STATUS -> {
+        if (!updateStatus()) {
+          stopSelf()
+          result = START_NOT_STICKY
+        }
+      }
+      ACTION_PAUSE -> {
+        pauseScreenRecord()
+      }
+
+      ACTION_RESUME -> {
+        resumeScreenRecord()
+      }
+      ACTION_STOP -> {
+        stopScreenRecord()
+        updateStatus()
         result = START_NOT_STICKY
       }
-    } else if (ACTION_PAUSE == action) {
-      pauseScreenRecord()
-    } else if (ACTION_RESUME == action) {
-      resumeScreenRecord()
+      else -> {
+        if (TextUtils.isEmpty(action)) {
+          stopScreenRecord()
+          updateStatus()
+          result = START_NOT_STICKY
+        }
+      }
     }
     return result
   }
@@ -147,12 +146,7 @@ class ScreenRecorderService : Service() {
     result.action = ACTION_QUERY_STATUS_RESULT
     result.putExtra(EXTRA_QUERY_RESULT_RECORDING, isRecording)
     result.putExtra(EXTRA_QUERY_RESULT_PAUSING, isPausing)
-    if (DEBUG) {
-      Log.v(
-        TAG,
-        "sendBroadcast:isRecording=$isRecording,isPausing=$isPausing"
-      )
-    }
+    Log.v(TAG, "sendBroadcast:isRecording=$isRecording,isPausing=$isPausing")
     sendBroadcast(result)
     return isRecording
   }
@@ -162,19 +156,16 @@ class ScreenRecorderService : Service() {
    */
   @TargetApi(value = VERSION_CODES.LOLLIPOP)
   private fun startScreenRecord(intent: Intent) {
-    if (DEBUG) {
-      Log.v(
-        TAG,
-        "startScreenRecord:sMuxer=$sMuxer"
-      )
-    }
+    Log.v(
+      TAG,
+      "startScreenRecord:sMuxer=$sMuxer"
+    )
     synchronized(sSync) {
       if (sMuxer == null) {
         val resultCode =
           intent.getIntExtra(EXTRA_RESULT_CODE, 0)
         // get MediaProjection
-        val projection =
-          mMediaProjectionManager!!.getMediaProjection(resultCode, intent)
+        val projection = mMediaProjectionManager.getMediaProjection(resultCode, intent)
         if (projection != null) {
           val metrics = resources.displayMetrics
           var width = metrics.widthPixels
@@ -194,20 +185,19 @@ class ScreenRecorderService : Service() {
             width = (width / scale).toInt()
             height = (height / scale).toInt()
           }
-          if (DEBUG) {
-            Log.v(
-              TAG, String.format(
-                "startRecording:(%d,%d)(%d,%d)", metrics.widthPixels,
-                metrics.heightPixels, width, height
-              )
+          Log.v(
+            TAG,
+            String.format(
+              "startRecording:(%d,%d)(%d,%d)",
+              metrics.widthPixels,
+              metrics.heightPixels,
+              width,
+              height
             )
-          }
+          )
           try {
             // if you record audio only, ".m4a" is also OK.
-            sMuxer = MediaMuxerWrapper(
-              this,
-              ".mp4"
-            )
+            sMuxer = MediaMuxerWrapper(this, ".mp4")
             // for screen capturing
             MediaScreenEncoder(
               sMuxer,
@@ -220,10 +210,7 @@ class ScreenRecorderService : Service() {
               15
             )
             // for audio capturing
-            MediaAudioEncoder(
-              sMuxer,
-              mMediaEncoderListener
-            )
+            MediaAudioEncoder(sMuxer, mMediaEncoderListener)
             sMuxer!!.prepare()
             sMuxer!!.startRecording()
           } catch (e: IOException) {
@@ -238,12 +225,7 @@ class ScreenRecorderService : Service() {
    * stop screen recording
    */
   private fun stopScreenRecord() {
-    if (DEBUG) {
-      Log.v(
-        TAG,
-        "stopScreenRecord:sMuxer=$sMuxer"
-      )
-    }
+    Log.v(TAG, "stopScreenRecord:sMuxer=$sMuxer")
     synchronized(sSync) {
       if (sMuxer != null) {
         sMuxer!!.stopRecording()
@@ -252,10 +234,7 @@ class ScreenRecorderService : Service() {
       }
     }
     stopForeground(true)
-    if (mNotificationManager != null) {
-      mNotificationManager!!.cancel(NOTIFICATION)
-      mNotificationManager = null
-    }
+    mNotificationManager.cancel(NOTIFICATION)
     stopSelf()
   }
 
@@ -280,12 +259,9 @@ class ScreenRecorderService : Service() {
    * and set this service as foreground service to keep alive as possible as this can.
    */
   private fun showNotification(text: CharSequence) {
-    if (DEBUG) {
-      Log.v(TAG, "showNotification:$text")
-    }
+    Log.v(TAG, "showNotification:$text")
     // Set the info for the views that show in the notification panel.
-    val builder: Builder
-    builder = Builder(this)
+    val builder: Builder = Builder(this)
       .setSmallIcon(mipmap.ic_launcher)
       .setTicker(text)
       .setWhen(System.currentTimeMillis())
@@ -297,22 +273,17 @@ class ScreenRecorderService : Service() {
         "AndroidTest",
         "Channel1", NotificationManager.IMPORTANCE_DEFAULT
       )
-      mNotificationManager!!.createNotificationChannel(channel)
+      mNotificationManager.createNotificationChannel(channel)
       builder.setChannelId("AndroidTest")
     }
     val notification = builder.build()
     startForeground(NOTIFICATION, notification)
     // Send the notification.
-    mNotificationManager!!.notify(NOTIFICATION, notification)
+    mNotificationManager.notify(NOTIFICATION, notification)
   }
 
   protected fun createPendingIntent(): PendingIntent {
     FileUtils.DIR_NAME = APP_DIR_NAME
-    return PendingIntent.getActivity(
-      this,
-      0,
-      Intent(this, ScreenRecorderActivity::class.java),
-      0
-    )
+    return PendingIntent.getActivity(this, 0, Intent(this, ScreenRecorderActivity::class.java), 0)
   }
 }

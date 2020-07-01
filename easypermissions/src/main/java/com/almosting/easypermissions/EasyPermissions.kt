@@ -75,9 +75,9 @@ object EasyPermissions {
     grantResults: IntArray,
     vararg receivers: Any
   ) {
-    val granted: MutableList<String?> =
+    val granted: MutableList<String> =
       ArrayList()
-    val denied: MutableList<String?> =
+    val denied: MutableList<String> =
       ArrayList()
     for (i in permissions.indices) {
       val perm = permissions[i]
@@ -215,12 +215,12 @@ object EasyPermissions {
   interface PermissionCallbacks : OnRequestPermissionsResultCallback {
     fun onPermissionsGranted(
       requestCode: Int,
-      perms: List<String?>
+      perms: List<String>
     )
 
     fun onPermissionsDenied(
       requestCode: Int,
-      perms: List<String?>
+      perms: List<String>
     )
   }
 
