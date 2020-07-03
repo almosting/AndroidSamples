@@ -6,6 +6,8 @@ import android.util.Log
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.nio.ByteBuffer
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Created by w.feng on 2018/10/11
@@ -20,7 +22,8 @@ abstract class MediaEncoder internal constructor(
     fun onStopped(encoder: MediaEncoder?)
   }
 
-  private val mSync: Object? = Object()
+  private val lock = ReentrantLock()
+  private val condition = lock.newCondition()
 
   @Volatile
   var mIsCapturing = false
@@ -45,15 +48,14 @@ abstract class MediaEncoder internal constructor(
   }
 
   fun frameAvailableSoon(): Boolean {
-    if (DEBUG) {
-      Log.v(TAG, "frameAvailableSoon")
-    }
-    synchronized(mSync as Object) {
+    Log.v(TAG, "frameAvailableSoon")
+    lock.withLock {
       if (!mIsCapturing || mRequestStop) {
         return false
       }
       mRequestDrain++
-      mSync.notifyAll()
+      condition.signalAll()
+      return@withLock
     }
     return true
   }
@@ -63,20 +65,21 @@ abstract class MediaEncoder internal constructor(
    */
   override fun run() {
     //		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-    synchronized(mSync as Object) {
+    lock.withLock {
       mRequestStop = false
       mRequestDrain = 0
-      mSync.notify()
+      condition.signal()
     }
-    var localRequestStop: Boolean
-    var localRequestDrain: Boolean
+    var localRequestStop = false
+    var localRequestDrain = false
     while (true) {
-      synchronized(mSync) {
+      lock.withLock {
         localRequestStop = mRequestStop
         localRequestDrain = mRequestDrain > 0
         if (localRequestDrain) {
           mRequestDrain--
         }
+        return@withLock
       }
       if (localRequestStop) {
         drain()
@@ -91,19 +94,14 @@ abstract class MediaEncoder internal constructor(
       if (localRequestDrain) {
         drain()
       } else {
-        synchronized(mSync) {
-          try {
-            mSync.wait()
-          } catch (e: InterruptedException) {
-            return
-          }
+        lock.withLock {
+          condition.await()
+          return@withLock
         }
       }
     } // end of while
-    if (DEBUG) {
-      Log.d(TAG, "Encoder thread exiting")
-    }
-    synchronized(mSync) {
+    Log.d(TAG, "Encoder thread exiting")
+    lock.withLock {
       mRequestStop = true
       mIsCapturing = false
     }
@@ -119,14 +117,12 @@ abstract class MediaEncoder internal constructor(
 
   /*package*/
   open fun startRecording() {
-    if (DEBUG) {
-      Log.v(TAG, "startRecording")
-    }
-    synchronized(mSync as Object) {
+    Log.v(TAG, "startRecording")
+    lock.withLock {
       mIsCapturing = true
       mRequestStop = false
       mRequestPause = false
-      mSync.notifyAll()
+      condition.signalAll()
     }
   }
 
@@ -135,16 +131,14 @@ abstract class MediaEncoder internal constructor(
    */
   /*package*/
   open fun stopRecording() {
-    if (DEBUG) {
-      Log.d(TAG, "stopRecording")
-    }
-    synchronized(mSync as Object) {
+    Log.d(TAG, "stopRecording")
+    lock.withLock {
       if (!mIsCapturing || mRequestStop) {
         return
       }
       // for rejecting newer frame
       mRequestStop = true
-      mSync.notifyAll()
+      condition.signalAll()
     }
   }
 
@@ -152,21 +146,19 @@ abstract class MediaEncoder internal constructor(
     if (DEBUG) {
       Log.v(TAG, "pauseRecording")
     }
-    synchronized(mSync as Object) {
+    lock.withLock {
       if (!mIsCapturing || mRequestStop) {
         return
       }
       mRequestPause = true
       mLastPausedTimesUs = System.nanoTime() / 1000
-      mSync.notifyAll()
+      condition.signalAll()
     }
   }
 
   fun resumeRecording() {
-    if (DEBUG) {
-      Log.v(TAG, "resumeRecording")
-    }
-    synchronized(mSync as Object) {
+    Log.v(TAG, "resumeRecording")
+    lock.withLock {
       if (!mIsCapturing || mRequestStop) {
         return
       }
@@ -175,7 +167,7 @@ abstract class MediaEncoder internal constructor(
         mLastPausedTimesUs = 0
       }
       mRequestPause = false
-      mSync.notifyAll()
+      condition.signalAll()
     }
   }
   //********************************************************************************
@@ -184,9 +176,7 @@ abstract class MediaEncoder internal constructor(
    * Release all released objects
    */
   protected open fun release() {
-    if (DEBUG) {
-      Log.d(TAG, "release:")
-    }
+    Log.d(TAG, "release:")
     try {
       mListener!!.onStopped(this)
     } catch (e: Exception) {
@@ -216,9 +206,7 @@ abstract class MediaEncoder internal constructor(
   }
 
   protected open fun signalEndOfInputStream() {
-    if (DEBUG) {
-      Log.d(TAG, "sending EOS to encoder")
-    }
+    Log.d(TAG, "sending EOS to encoder")
     // signalEndOfInputStream is only avairable for video encoding with surface
     // and equivalent sending a empty buffer with BUFFER_FLAG_END_OF_STREAM flag.
     //		mMediaCodec.signalEndOfInputStream();	// API >= 18
@@ -303,9 +291,7 @@ abstract class MediaEncoder internal constructor(
           }
         }
       } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-        if (DEBUG) {
-          Log.v(TAG, "INFO_OUTPUT_BUFFERS_CHANGED")
-        }
+        Log.v(TAG, "INFO_OUTPUT_BUFFERS_CHANGED")
         // this should not come when encoding
         encoderOutputBuffers = mMediaCodec!!.getOutputBuffers()
       } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
@@ -339,12 +325,10 @@ abstract class MediaEncoder internal constructor(
         }
       } else if (encoderStatus < 0) {
         // unexpected status
-        if (DEBUG) {
-          Log.w(
-            TAG,
-            "drain:unexpected result from encoder#dequeueOutputBuffer: $encoderStatus"
-          )
-        }
+        Log.w(
+          TAG,
+          "drain:unexpected result from encoder#dequeueOutputBuffer: $encoderStatus"
+        )
       } else {
         val encodedData = encoderOutputBuffers[encoderStatus]
           ?: // this never should come...may be a MediaCodec internal error
@@ -354,9 +338,7 @@ abstract class MediaEncoder internal constructor(
           // but MediaCodec#getOutputFormat can not call here(because INFO_OUTPUT_FORMAT_CHANGED don't come yet)
           // therefor we should expand and prepare output format from buffer data.
           // This sample is for API>=18(>=Android 4.3), just ignore this flag here
-          if (DEBUG) {
-            Log.d(TAG, "drain:BUFFER_FLAG_CODEC_CONFIG")
-          }
+          Log.d(TAG, "drain:BUFFER_FLAG_CODEC_CONFIG")
           mBufferInfo!!.size = 0
         }
         if (mBufferInfo!!.size != 0) {
@@ -394,8 +376,11 @@ abstract class MediaEncoder internal constructor(
    * get next encoding presentationTimeUs
    */
   fun getPTSUs(): Long {
-    var result: Long
-    synchronized(mSync as Object) { result = System.nanoTime() / 1000L - offsetPTSUs }
+    var result: Long = 0
+    lock.withLock {
+      result = System.nanoTime() / 1000L - offsetPTSUs
+      return@withLock
+    }
     // presentationTimeUs should be monotonic
     // otherwise muxer fail to write
     if (result < prevOutputPTSUs) {
@@ -424,15 +409,10 @@ abstract class MediaEncoder internal constructor(
     mWeakMuxer = WeakReference(muxer)
     muxer.addEncoder(this)
     mListener = callback
-    synchronized(mSync as Object) {
+    lock.withLock {
       mBufferInfo = BufferInfo()
       Thread(this, javaClass.simpleName).start()
-      try {
-        mSync.wait()
-        Log.d(TAG, "MediaEncoder: ")
-      } catch (e: InterruptedException) {
-        e.printStackTrace()
-      }
+      condition.await()
     }
   }
 }

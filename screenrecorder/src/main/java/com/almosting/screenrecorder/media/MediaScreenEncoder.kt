@@ -17,6 +17,8 @@ import com.almosting.screenrecorder.media.glutils.EGLBase.IEglSurface
 import com.almosting.screenrecorder.media.glutils.EglTask
 import com.almosting.screenrecorder.media.glutils.GLDrawer2D
 import java.io.IOException
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Created by w.feng on 2018/10/11
@@ -32,22 +34,20 @@ class MediaScreenEncoder(
   private val fps: Int
   private var mSurface: Surface? = null
   private val mHandler: Handler?
+  private val lock = ReentrantLock()
+  private val condition = lock.newCondition()
   override fun release() {
-    mHandler!!.getLooper().quit()
+    mHandler!!.looper.quit()
     super.release()
   }
 
-  @Throws(IOException::class) public override fun prepare() {
-    if (DEBUG) {
-      Log.i(TAG, "prepare: ")
-    }
+  @Throws(IOException::class) override fun prepare() {
+    Log.i(TAG, "prepare: ")
     mSurface = prepareSurfaceEncoder(MIME_TYPE, fps, bitrate)
     mMediaCodec!!.start()
     mIsRecording = true
     Thread(mScreenCaptureTask, "ScreenCaptureThread").start()
-    if (DEBUG) {
-      Log.i(TAG, "prepare finishing")
-    }
+    Log.i(TAG, "prepare finishing")
     if (mListener != null) {
       try {
         mListener.onPrepared(this)
@@ -57,18 +57,16 @@ class MediaScreenEncoder(
     }
   }
 
-  public override fun stopRecording() {
-    if (DEBUG) {
-      Log.v(TAG, "stopRecording:")
-    }
-    synchronized(mSync as Object) {
+  override fun stopRecording() {
+    Log.v(TAG, "stopRecording:")
+    lock.withLock {
       mIsRecording = false
-      mSync.notifyAll()
+      condition.signalAll()
+      return@withLock
     }
     super.stopRecording()
   }
 
-  private val mSync: Object? = Object()
 
   @Volatile
   private var mIsRecording = false
@@ -86,9 +84,7 @@ class MediaScreenEncoder(
     private var mDrawer: GLDrawer2D? = null
     private val mTexMatrix: FloatArray? = FloatArray(16)
     override fun onStart() {
-      if (DEBUG) {
-        Log.d(TAG, "mScreenCaptureTask#onStart:")
-      }
+      Log.d(TAG, "mScreenCaptureTask#onStart:")
       mDrawer = GLDrawer2D(true)
       mTexId = mDrawer!!.initTex()
       mSourceTexture = SurfaceTexture(mTexId)
@@ -96,22 +92,18 @@ class MediaScreenEncoder(
       mSourceSurface = Surface(mSourceTexture)
       mSourceTexture!!.setOnFrameAvailableListener(mOnFrameAvailableListener, mHandler)
       mEncoderSurface = getEgl()!!.createFromSurface(mSurface)
-      if (DEBUG) {
-        Log.d(TAG, "setup VirtualDisplay")
-      }
-      intervals = (1000f / fps) as Long
+      Log.d(TAG, "setup VirtualDisplay")
+      intervals = (1000f / fps).toLong()
       display = mMediaProjection!!.createVirtualDisplay(
         "Capturing Display",
         mWidth, mHeight, mDensity,
         DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
         mSourceSurface, mCallback, mHandler
       )
-      if (DEBUG) {
-        Log.v(
-          TAG,
-          "screen capture loop:display=$display"
-        )
-      }
+      Log.v(
+        TAG,
+        "screen capture loop:display=$display"
+      )
       queueEvent(mDrawTask)
     }
 
@@ -133,18 +125,12 @@ class MediaScreenEncoder(
         mEncoderSurface = null
       }
       makeCurrent()
-      if (DEBUG) {
-        Log.v(TAG, "mScreenCaptureTask#onStop:")
-      }
+      Log.v(TAG, "mScreenCaptureTask#onStop:")
       if (display != null) {
-        if (DEBUG) {
-          Log.v(TAG, "release VirtualDisplay")
-        }
+        Log.v(TAG, "release VirtualDisplay")
         display!!.release()
       }
-      if (DEBUG) {
-        Log.v(TAG, "tear down MediaProjection")
-      }
+      Log.v(TAG, "tear down MediaProjection")
       if (mMediaProjection != null) {
         mMediaProjection!!.stop()
         mMediaProjection = null
@@ -152,9 +138,7 @@ class MediaScreenEncoder(
     }
 
     override fun onError(e: Exception?): Boolean {
-      if (DEBUG) {
-        Log.w(TAG, "mScreenCaptureTask:", e)
-      }
+      Log.w(TAG, "mScreenCaptureTask:", e)
       return false
     }
 
@@ -167,16 +151,14 @@ class MediaScreenEncoder(
 
     private val mOnFrameAvailableListener: OnFrameAvailableListener? =
       OnFrameAvailableListener {
-        if (DEBUG) {
-          Log.v(
-            TAG,
-            "onFrameAvailable:mIsRecording=$mIsRecording"
-          )
-        }
+        Log.v(
+          TAG,
+          "onFrameAvailable:mIsRecording=$mIsRecording"
+        )
         if (mIsRecording) {
-          synchronized(mSync as Object) {
+          lock.withLock {
             requestDraw = true
-            mSync.notifyAll()
+            condition.signalAll()
           }
         }
       }
@@ -185,19 +167,17 @@ class MediaScreenEncoder(
         if (DEBUG) {
           Log.v(TAG, "draw:")
         }
-        var local_request_draw: Boolean
-        synchronized(mSync as Object) {
+        var local_request_draw = false
+        lock.withLock {
           local_request_draw = requestDraw
           requestDraw = false
           if (!local_request_draw) {
-            try {
-              mSync!!.wait(intervals)
-              local_request_draw = requestDraw
-              requestDraw = false
-            } catch (e: InterruptedException) {
-              return
-            }
+            condition.await(intervals, java.util.concurrent.TimeUnit.MILLISECONDS)
+            local_request_draw = requestDraw
+            requestDraw = false
+            return@withLock
           }
+
         }
         if (mIsRecording) {
           if (local_request_draw) {
