@@ -21,20 +21,8 @@ abstract class MediaVideoEncoderBase internal constructor(
     mime: String?, frameRate: Int,
     bitrate: Int
   ): MediaFormat? {
-    if (DEBUG) {
-      Log.v(
-        TAG, String.format(
-          "createEncoderFormat:(%d,%d),mime=%s,frameRate=%d,bitrate=%d", mWidth,
-          mHeight, mime, frameRate, bitrate
-        )
-      )
-    }
-    val format =
-      MediaFormat.createVideoFormat(mime, mWidth, mHeight)
-    format.setInteger(
-      MediaFormat.KEY_COLOR_FORMAT,
-      CodecCapabilities.COLOR_FormatSurface
-    )
+    val format = MediaFormat.createVideoFormat(mime, mWidth, mHeight)
+    format.setInteger(MediaFormat.KEY_COLOR_FORMAT, CodecCapabilities.COLOR_FormatSurface)
     format.setInteger(
       MediaFormat.KEY_BIT_RATE,
       if (bitrate > 0) bitrate else calcBitRate(frameRate)
@@ -49,37 +37,19 @@ abstract class MediaVideoEncoderBase internal constructor(
     mime: String?, frameRate: Int,
     bitrate: Int
   ): Surface? {
-    if (DEBUG) {
-      Log.v(
-        TAG, String.format(
-          "prepareSurfaceEncoder:(%d,%d),mime=%s,frameRate=%d,bitrate=%d", mWidth,
-          mHeight, mime, frameRate, bitrate
-        )
-      )
-    }
     mTrackIndex = -1
     mIsEOS = false
     mMuxerStarted = mIsEOS
-    val videoCodecInfo =
-      selectVideoCodec(mime)
-        ?: throw IllegalArgumentException("Unable to find an appropriate codec for $mime")
-    if (DEBUG) {
-      Log.i(
-        TAG,
-        "selected codec: " + videoCodecInfo.name
-      )
-    }
+    selectVideoCodec(mime)
+      ?: throw IllegalArgumentException("Unable to find an appropriate codec for $mime")
     val format = createEncoderFormat(mime, frameRate, bitrate)
-    if (DEBUG) {
-      Log.i(TAG, "format: $format")
-    }
     mMediaCodec = MediaCodec.createEncoderByType(mime!!)
     mMediaCodec!!.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
     return mMediaCodec!!.createInputSurface()
   }
 
   fun calcBitRate(frameRate: Int): Int {
-    val bitrate = (BPP * frameRate * mWidth * mHeight) as Int
+    val bitrate = (BPP * frameRate * mWidth * mHeight).toInt()
     Log.i(
       TAG,
       String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f)
@@ -98,9 +68,6 @@ abstract class MediaVideoEncoderBase internal constructor(
      * @return null if no codec matched
      */
     private fun selectVideoCodec(mimeType: String?): MediaCodecInfo? {
-      if (DEBUG) {
-        Log.v(TAG, "selectVideoCodec:")
-      }
 
       // get the list of available codecs
       val numCodecs = MediaCodecList.getCodecCount()
@@ -114,12 +81,6 @@ abstract class MediaVideoEncoderBase internal constructor(
         val types = codecInfo.supportedTypes
         for (type in types) {
           if (type.equals(mimeType, ignoreCase = true)) {
-            if (DEBUG) {
-              Log.i(
-                TAG,
-                "codec:" + codecInfo.name + ",MIME=" + type
-              )
-            }
             val format = selectColorFormat(codecInfo, mimeType)
             if (format > 0) {
               return codecInfo
@@ -156,7 +117,7 @@ abstract class MediaVideoEncoderBase internal constructor(
       if (result == 0) {
         Log.e(
           TAG,
-          "couldn't find a good color format for " + codecInfo!!.getName() + " / " + mimeType
+          "couldn't find a good color format for " + codecInfo!!.name + " / " + mimeType
         )
       }
       return result
@@ -167,12 +128,6 @@ abstract class MediaVideoEncoderBase internal constructor(
      */
     private val recognizedFormats: IntArray?
     private fun isRecognizedViewoFormat(colorFormat: Int): Boolean {
-      if (DEBUG) {
-        Log.i(
-          TAG,
-          "isRecognizedViewoFormat:colorFormat=$colorFormat"
-        )
-      }
       val n =
         recognizedFormats?.size ?: 0
       for (i in 0 until n) {
@@ -194,9 +149,6 @@ abstract class MediaVideoEncoderBase internal constructor(
   }
 
   override fun signalEndOfInputStream() {
-    if (DEBUG) {
-      Log.d(TAG, "sending EOS to encoder")
-    }
     mMediaCodec!!.signalEndOfInputStream() // API >= 18
     mIsEOS = true
   }

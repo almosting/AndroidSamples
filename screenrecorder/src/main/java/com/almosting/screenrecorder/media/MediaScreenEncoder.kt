@@ -222,8 +222,7 @@ class MediaScreenEncoder(
   init {
     this.fps = if (fps in 1..30) fps else FRAME_RATE
     this.bitrate = if (bitrate > 0) bitrate else calcBitRate(fps)
-    val thread =
-      HandlerThread(TAG)
+    val thread = HandlerThread(TAG)
     thread.start()
     mHandler = Handler(thread.looper)
   }
