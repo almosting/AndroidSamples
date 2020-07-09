@@ -75,23 +75,23 @@ class MediaScreenEncoder(
 
   private inner class DrawTask(sharedContext: IContext?, flags: Int) :
     EglTask(sharedContext, flags) {
-    private var display: VirtualDisplay? = null
+    private lateinit var display: VirtualDisplay
     private var intervals: Long = 0
     private var mTexId = 0
-    private var mSourceTexture: SurfaceTexture? = null
-    private var mSourceSurface: Surface? = null
-    private var mEncoderSurface: IEglSurface? = null
-    private var mDrawer: GLDrawer2D? = null
-    private val mTexMatrix: FloatArray? = FloatArray(16)
+    private lateinit var mSourceTexture: SurfaceTexture
+    private lateinit var mSourceSurface: Surface
+    private lateinit var mEncoderSurface: IEglSurface
+    private lateinit var mDrawer: GLDrawer2D
+    private val mTexMatrix: FloatArray = FloatArray(16)
     override fun onStart() {
       Log.d(TAG, "mScreenCaptureTask#onStart:")
       mDrawer = GLDrawer2D(true)
-      mTexId = mDrawer!!.initTex()
+      mTexId = mDrawer.initTex()
       mSourceTexture = SurfaceTexture(mTexId)
-      mSourceTexture!!.setDefaultBufferSize(mWidth, mHeight)
+      mSourceTexture.setDefaultBufferSize(mWidth, mHeight)
       mSourceSurface = Surface(mSourceTexture)
-      mSourceTexture!!.setOnFrameAvailableListener(mOnFrameAvailableListener, mHandler)
-      mEncoderSurface = getEgl()!!.createFromSurface(mSurface)
+      mSourceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener, mHandler)
+      mEncoderSurface = getEgl()?.createFromSurface(mSurface)!!
       Log.d(TAG, "setup VirtualDisplay")
       intervals = (1000f / fps).toLong()
       display = mMediaProjection!!.createVirtualDisplay(
@@ -108,33 +108,16 @@ class MediaScreenEncoder(
     }
 
     override fun onStop() {
-      if (mDrawer != null) {
-        mDrawer!!.release()
-        mDrawer = null
-      }
-      if (mSourceSurface != null) {
-        mSourceSurface!!.release()
-        mSourceSurface = null
-      }
-      if (mSourceTexture != null) {
-        mSourceTexture!!.release()
-        mSourceTexture = null
-      }
-      if (mEncoderSurface != null) {
-        mEncoderSurface!!.release()
-        mEncoderSurface = null
-      }
+      mDrawer.release()
+      mSourceSurface.release()
+      mSourceTexture.release()
+      mEncoderSurface.release()
       makeCurrent()
       Log.v(TAG, "mScreenCaptureTask#onStop:")
-      if (display != null) {
-        Log.v(TAG, "release VirtualDisplay")
-        display!!.release()
-      }
+      Log.v(TAG, "release VirtualDisplay")
+      display.release()
       Log.v(TAG, "tear down MediaProjection")
-      if (mMediaProjection != null) {
-        mMediaProjection!!.stop()
-        mMediaProjection = null
-      }
+      mMediaProjection?.stop()
     }
 
     override fun onError(e: Exception?): Boolean {
@@ -164,30 +147,28 @@ class MediaScreenEncoder(
       }
     private val mDrawTask: Runnable? = object : Runnable {
       override fun run() {
-        if (DEBUG) {
-          Log.v(TAG, "draw:")
-        }
-        var local_request_draw = false
+        Log.v(TAG, "draw:")
+        var localRequestDraw = false
         lock.withLock {
-          local_request_draw = requestDraw
+          localRequestDraw = requestDraw
           requestDraw = false
-          if (!local_request_draw) {
+          if (!localRequestDraw) {
             condition.await(intervals, java.util.concurrent.TimeUnit.MILLISECONDS)
-            local_request_draw = requestDraw
+            localRequestDraw = requestDraw
             requestDraw = false
             return@withLock
           }
 
         }
         if (mIsRecording) {
-          if (local_request_draw) {
-            mSourceTexture!!.updateTexImage()
-            mSourceTexture!!.getTransformMatrix(mTexMatrix)
+          if (localRequestDraw) {
+            mSourceTexture.updateTexImage()
+            mSourceTexture.getTransformMatrix(mTexMatrix)
           }
           // 在Surface上绘制SurfaceTexture接收的图像以输入MediaCodec
-          mEncoderSurface!!.makeCurrent()
-          mDrawer!!.draw(mTexId, mTexMatrix, 0)
-          mEncoderSurface!!.swap()
+          mEncoderSurface.makeCurrent()
+          mDrawer.draw(mTexId, mTexMatrix, 0)
+          mEncoderSurface.swap()
           makeCurrent()
           GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
           GLES20.glFlush()
@@ -201,7 +182,7 @@ class MediaScreenEncoder(
     }
   }
 
-  private val mCallback: Callback? =
+  private val mCallback: Callback =
     object : Callback() {
       /**
        * Called when the virtual display video projection has been
@@ -210,9 +191,7 @@ class MediaScreenEncoder(
        * The surface will not receive any more buffers while paused.
        */
       override fun onPaused() {
-        if (DEBUG) {
-          Log.v(TAG, "Callback#onPaused:")
-        }
+        Log.v(TAG, "Callback#onPaused:")
       }
 
       /**
@@ -220,9 +199,7 @@ class MediaScreenEncoder(
        * resumed after having been paused.
        */
       override fun onResumed() {
-        if (DEBUG) {
-          Log.v(TAG, "Callback#onResumed:")
-        }
+        Log.v(TAG, "Callback#onResumed:")
       }
 
       /**
@@ -232,21 +209,18 @@ class MediaScreenEncoder(
        * of the application to release() the virtual display.
        */
       override fun onStopped() {
-        if (DEBUG) {
-          Log.v(TAG, "Callback#onStopped:")
-        }
+        Log.v(TAG, "Callback#onStopped:")
       }
     }
 
   companion object {
-    private val TAG: String? = "MediaScreenEncoder"
-    private const val DEBUG = true
-    private val MIME_TYPE: String? = MediaFormat.MIMETYPE_VIDEO_AVC
+    private const val TAG: String = "MediaScreenEncoder"
+    private const val MIME_TYPE: String = MediaFormat.MIMETYPE_VIDEO_AVC
     private const val FRAME_RATE = 25
   }
 
   init {
-    this.fps = if (fps > 0 && fps <= 30) fps else FRAME_RATE
+    this.fps = if (fps in 1..30) fps else FRAME_RATE
     this.bitrate = if (bitrate > 0) bitrate else calcBitRate(fps)
     val thread =
       HandlerThread(TAG)
