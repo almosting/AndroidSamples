@@ -53,10 +53,10 @@ class RationaleDialogClickListener : OnClickListener {
         mRationaleCallbacks!!.onRationaleAccepted(requestCode)
       }
       if (mHost is Fragment) {
-        PermissionHelper.Companion.newInstance(mHost as Fragment)
+        PermissionHelper.newInstance(mHost as Fragment)
           .directRequestPermissions(requestCode, *permissions)
       } else if (mHost is Activity) {
-        PermissionHelper.Companion.newInstance(mHost as Activity)
+        PermissionHelper.newInstance(mHost as Activity)
           .directRequestPermissions(requestCode, *permissions)
       } else {
         throw RuntimeException("Host must be an Activity or Fragment!")

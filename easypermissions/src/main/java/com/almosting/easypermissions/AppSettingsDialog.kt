@@ -93,13 +93,7 @@ class AppSettingsDialog : Parcelable {
     positiveListener: OnClickListener?,
     negativeListener: OnClickListener?
   ): AlertDialog {
-    val builder: androidx.appcompat.app.AlertDialog.Builder
-    builder = if (mThemeResId > 0) {
-      Builder(mContext!!, mThemeResId)
-    } else {
-      Builder(mContext!!)
-    }
-    return builder
+    return Builder(mContext!!, mThemeResId)
       .setCancelable(false)
       .setTitle(mTitle)
       .setMessage(mRationale)

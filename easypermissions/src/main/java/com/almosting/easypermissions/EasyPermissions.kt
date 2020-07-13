@@ -108,7 +108,7 @@ object EasyPermissions {
     host: Activity,
     deniedPermissions: List<String>
   ): Boolean {
-    return PermissionHelper.Companion.newInstance(host)
+    return PermissionHelper.newInstance(host)
       .somePermissionPermanentlyDenied(deniedPermissions)
   }
 
@@ -116,7 +116,7 @@ object EasyPermissions {
     host: Fragment,
     deniedPermissions: List<String>
   ): Boolean {
-    return PermissionHelper.Companion.newInstance(host)
+    return PermissionHelper.newInstance(host)
       .somePermissionPermanentlyDenied(deniedPermissions)
   }
 

@@ -59,13 +59,7 @@ class RationaleDialogConfig {
     context: Context?,
     listener: OnClickListener?
   ): AlertDialog {
-    val builder: Builder
-    builder = if (theme > 0) {
-      Builder(context!!, theme)
-    } else {
-      Builder(context!!)
-    }
-    return builder
+    return Builder(context!!, theme)
       .setCancelable(false)
       .setPositiveButton(positiveButton, listener)
       .setNegativeButton(negativeButton, listener)
@@ -76,14 +70,8 @@ class RationaleDialogConfig {
   fun createFrameworkDialog(
     context: Context?,
     listener: OnClickListener?
-  ): android.app.AlertDialog {
-    val builder: android.app.AlertDialog.Builder
-    builder = if (theme > 0) {
-      android.app.AlertDialog.Builder(context, theme)
-    } else {
-      android.app.AlertDialog.Builder(context)
-    }
-    return builder
+  ): AlertDialog {
+    return Builder(context!!, theme)
       .setCancelable(false)
       .setPositiveButton(positiveButton, listener)
       .setNegativeButton(negativeButton, listener)
