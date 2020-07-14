@@ -270,18 +270,18 @@ open class ScreenRecorderActivity : AppCompatActivity(),
   /**
    * called when user give permission for audio recording or canceled
    */
-  protected fun onUpdateAudioPermission(hasPermission: Boolean) {}
+  private fun onUpdateAudioPermission(hasPermission: Boolean) {}
 
   /**
    * called when user give permission for accessing external storage or canceled
    */
-  protected fun onUpdateExternalStoragePermission(hasPermission: Boolean) {}
+  private fun onUpdateExternalStoragePermission(hasPermission: Boolean) {}
 
   /**
    * called when user give permission for accessing network or canceled
    * this will not be called
    */
-  protected fun onUpdateNetworkPermission(hasPermission: Boolean) {}
+  private fun onUpdateNetworkPermission(hasPermission: Boolean) {}
 
   /**
    * check whether this app has write external storage
