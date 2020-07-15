@@ -11,7 +11,6 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
@@ -66,12 +65,6 @@ open class ScreenRecorderActivity : AppCompatActivity(),
     resultCode: Int,
     data: Intent?
   ) {
-    if (DEBUG) {
-      Log.v(
-        TAG,
-        "onActivityResult:resultCode=$resultCode,data=$data"
-      )
-    }
     super.onActivityResult(requestCode, resultCode, data)
     if (REQUEST_CODE_SCREEN_CAPTURE == requestCode) {
       if (resultCode != Activity.RESULT_OK) {
@@ -104,8 +97,8 @@ open class ScreenRecorderActivity : AppCompatActivity(),
               val intent = Intent(
                 this@ScreenRecorderActivity,
                 ScreenRecorderService::class.java
-              ).apply {
-                action = ScreenRecorderService.ACTION_STOP
+              ).also {
+                it.action = ScreenRecorderService.ACTION_STOP
               }
               startService(intent)
             }
@@ -119,14 +112,14 @@ open class ScreenRecorderActivity : AppCompatActivity(),
           }
           id.pause_button -> if (isChecked) {
             val intent =
-              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java).apply {
-                action = ScreenRecorderService.ACTION_PAUSE
+              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java).also {
+                it.action = ScreenRecorderService.ACTION_PAUSE
               }
             startService(intent)
           } else {
             val intent =
-              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java).apply {
-                action = ScreenRecorderService.ACTION_RESUME
+              Intent(this@ScreenRecorderActivity, ScreenRecorderService::class.java).also {
+                it.action = ScreenRecorderService.ACTION_RESUME
               }
             startService(intent)
           }
@@ -137,17 +130,17 @@ open class ScreenRecorderActivity : AppCompatActivity(),
     }
 
   private fun queryRecordingStatus() {
-    val intent = Intent(this, ScreenRecorderService::class.java).apply {
-      action = ScreenRecorderService.ACTION_QUERY_STATUS
+    val intent = Intent(this, ScreenRecorderService::class.java).also {
+      it.action = ScreenRecorderService.ACTION_QUERY_STATUS
     }
     startService(intent)
   }
 
   private fun startScreenRecorder(resultCode: Int, data: Intent?) {
-    val intent = Intent(this, ScreenRecorderService::class.java).apply {
-      action = ScreenRecorderService.ACTION_START
-      putExtra(ScreenRecorderService.EXTRA_RESULT_CODE, resultCode)
-      putExtras(data!!)
+    val intent = Intent(this, ScreenRecorderService::class.java).also {
+      it.action = ScreenRecorderService.ACTION_START
+      it.putExtra(ScreenRecorderService.EXTRA_RESULT_CODE, resultCode)
+      it.putExtras(data!!)
     }
     startService(intent)
   }
@@ -344,7 +337,6 @@ open class ScreenRecorderActivity : AppCompatActivity(),
   }
 
   companion object {
-    private const val DEBUG = false
     private const val TAG = "MainActivity"
     private const val REQUEST_CODE_SCREEN_CAPTURE = 1
     protected const val REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 0x01
