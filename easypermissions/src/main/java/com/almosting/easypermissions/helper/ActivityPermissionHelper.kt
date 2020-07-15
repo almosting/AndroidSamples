@@ -34,10 +34,7 @@ class ActivityPermissionHelper internal constructor(host: Activity) :
     val fm = host.fragmentManager
     val fragment = fm.findFragmentByTag(RationaleDialogFragment.TAG)
     if (fragment is RationaleDialogFragment) {
-      Log.d(
-        TAG,
-        "Found existing fragment, not showing rationale."
-      )
+      Log.d(TAG, "Found existing fragment, not showing rationale.")
       return
     }
     RationaleDialogFragment.newInstance(
@@ -47,8 +44,7 @@ class ActivityPermissionHelper internal constructor(host: Activity) :
       theme,
       requestCode,
       perms
-    )
-      .showAllowingStateLoss(fm, RationaleDialogFragment.TAG)
+    ).showAllowingStateLoss(fm, RationaleDialogFragment.TAG)
   }
 
   override val context: Context?

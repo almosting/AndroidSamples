@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.almosting.easypermissions.EasyPermissions.PermissionCallbacks
 import com.almosting.easypermissions.EasyPermissions.RationaleCallbacks
 import com.almosting.easypermissions.helper.PermissionHelper
-import java.util.Arrays
 
 /**
  * Created by w.feng on 2018/10/10
@@ -49,32 +48,22 @@ class RationaleDialogClickListener : OnClickListener {
     val requestCode = mConfig.requestCode
     if (which == Dialog.BUTTON_POSITIVE) {
       val permissions = mConfig.permissions
-      if (mRationaleCallbacks != null) {
-        mRationaleCallbacks!!.onRationaleAccepted(requestCode)
-      }
-      if (mHost is Fragment) {
-        PermissionHelper.newInstance(mHost as Fragment)
+      mRationaleCallbacks?.onRationaleAccepted(requestCode)
+      when (mHost) {
+        is Fragment -> PermissionHelper.newInstance(mHost as Fragment)
           .directRequestPermissions(requestCode, *permissions)
-      } else if (mHost is Activity) {
-        PermissionHelper.newInstance(mHost as Activity)
+        is Activity -> PermissionHelper.newInstance(mHost as Activity)
           .directRequestPermissions(requestCode, *permissions)
-      } else {
-        throw RuntimeException("Host must be an Activity or Fragment!")
+        else -> {
+          throw RuntimeException("Host must be an Activity or Fragment!")
+        }
       }
     } else {
-      if (mRationaleCallbacks != null) {
-        mRationaleCallbacks!!.onRationaleDenied(requestCode)
-      }
+      mRationaleCallbacks?.onRationaleDenied(requestCode)
       notifyPermissionDenied()
     }
   }
 
-  private fun notifyPermissionDenied() {
-    if (mCallbacks != null) {
-      mCallbacks!!.onPermissionsDenied(
-        mConfig.requestCode,
-        Arrays.asList(*mConfig.permissions)
-      )
-    }
-  }
+  private fun notifyPermissionDenied() =
+    mCallbacks?.onPermissionsDenied(mConfig.requestCode, mConfig.permissions.toList())
 }

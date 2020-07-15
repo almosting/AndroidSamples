@@ -41,27 +41,24 @@ class PermissionRequest private constructor(
     if (other == null || javaClass != other.javaClass) {
       return false
     }
-    val request =
-      other as PermissionRequest
+    val request = other as PermissionRequest
     return Arrays.equals(mPerms, request.mPerms) && requestCode == request.requestCode
   }
 
   override fun hashCode(): Int {
-    var result = Arrays.hashCode(mPerms)
+    var result = mPerms.contentHashCode()
     result = 31 * result + requestCode
     return result
   }
 
   override fun toString(): String {
-    return "PermissionRequest{" +
-        "mHelper=" + helper +
-        ", mPerms=" + Arrays.toString(mPerms) +
-        ", mRequestCode=" + requestCode +
-        ", mRationale='" + rationale + '\'' +
-        ", mPositiveButtonText='" + positiveButtonText + '\'' +
-        ", mNegativeButtonText='" + negativeButtonText + '\'' +
-        ", mTheme=" + theme +
-        '}'
+    return """PermissionRequest{ mHelper=${helper}
+        , mPerms=${mPerms.contentToString()}
+        , mRequestCode=${requestCode}
+        , mRationale=${rationale}
+        , mPositiveButtonText= $positiveButtonText 
+        , mNegativeButtonText= $negativeButtonText
+        , mTheme=${theme}}"""
   }
 
   class Builder {
@@ -77,8 +74,7 @@ class PermissionRequest private constructor(
       activity: Activity, requestCode: Int,
       perms: Array<String>
     ) {
-      mHelper =
-        PermissionHelper.newInstance(activity)
+      mHelper = PermissionHelper.newInstance(activity)
       mRequestCode = requestCode
       mPerms = perms
     }
@@ -87,8 +83,7 @@ class PermissionRequest private constructor(
       fragment: Fragment, requestCode: Int,
       perms: Array<String>
     ) {
-      mHelper =
-        PermissionHelper.newInstance(fragment)
+      mHelper = PermissionHelper.newInstance(fragment)
       mRequestCode = requestCode
       mPerms = perms
     }
@@ -98,9 +93,7 @@ class PermissionRequest private constructor(
       return this
     }
 
-    fun setRationale(
-      @StringRes resId: Int
-    ): Builder {
+    fun setRationale(@StringRes resId: Int): Builder {
       mRationale = mHelper.context!!.getString(resId)
       return this
     }
@@ -110,9 +103,7 @@ class PermissionRequest private constructor(
       return this
     }
 
-    fun setPositiveButtonText(
-      @StringRes resId: Int
-    ): Builder {
+    fun setPositiveButtonText(@StringRes resId: Int): Builder {
       mPositiveButtonText = mHelper.context!!.getString(resId)
       return this
     }
@@ -122,9 +113,7 @@ class PermissionRequest private constructor(
       return this
     }
 
-    fun setNegativeButtonText(
-      @StringRes resId: Int
-    ): Builder {
+    fun setNegativeButtonText(@StringRes resId: Int): Builder {
       mNegativeButtonText = mHelper.context?.getString(resId)
       return this
     }
@@ -136,8 +125,7 @@ class PermissionRequest private constructor(
 
     fun build(): PermissionRequest {
       if (mRationale == null) {
-        mRationale =
-          mHelper.context!!.getString(string.rationale_ask)
+        mRationale = mHelper.context!!.getString(string.rationale_ask)
       }
       if (mPositiveButtonText == null) {
         mPositiveButtonText = mHelper.context?.getString(R.string.ok)

@@ -65,23 +65,17 @@ class AppSettingsDialog : Parcelable {
 
   private fun setActivityOrFragment(activityOrFragment: Any) {
     mActivityOrFragment = activityOrFragment
-    mContext = if (activityOrFragment is Activity) {
-      activityOrFragment
-    } else if (activityOrFragment is Fragment) {
-      activityOrFragment.context
-    } else {
-      throw IllegalStateException("Unknown object: $activityOrFragment")
+    mContext = when (activityOrFragment) {
+      is Activity -> activityOrFragment
+      is Fragment -> activityOrFragment.context
+      else -> throw IllegalStateException("Unknown object: $activityOrFragment")
     }
   }
 
-  private fun startForResult(intent: Intent) {
-    if (mActivityOrFragment is Activity) {
-      (mActivityOrFragment as Activity).startActivityForResult(intent, mRequestCode)
-    } else if (mActivityOrFragment is Fragment) {
-      (mActivityOrFragment as Fragment).startActivityForResult(
-        intent,
-        mRequestCode
-      )
+  private fun startForResult(intent: Intent) = when (mActivityOrFragment) {
+    is Activity -> (mActivityOrFragment as Activity).startActivityForResult(intent, mRequestCode)
+    is Fragment -> (mActivityOrFragment as Fragment).startActivityForResult(intent, mRequestCode)
+    else -> {
     }
   }
 
@@ -139,9 +133,7 @@ class AppSettingsDialog : Parcelable {
       mContext = fragment.context
     }
 
-    fun setThemeResId(
-      @StyleRes themeResId: Int
-    ): Builder {
+    fun setThemeResId(@StyleRes themeResId: Int): Builder {
       mThemeResId = themeResId
       return this
     }
@@ -161,9 +153,7 @@ class AppSettingsDialog : Parcelable {
       return this
     }
 
-    fun setRationale(
-      @StringRes rationale: Int
-    ): Builder {
+    fun setRationale(@StringRes rationale: Int): Builder {
       mRationale = mContext!!.getString(rationale)
       return this
     }
@@ -173,9 +163,7 @@ class AppSettingsDialog : Parcelable {
       return this
     }
 
-    fun setPositiveButton(
-      @StringRes textId: Int
-    ): Builder {
+    fun setPositiveButton(@StringRes textId: Int): Builder {
       mPositiveButtonText = mContext!!.getString(textId)
       return this
     }
@@ -185,9 +173,7 @@ class AppSettingsDialog : Parcelable {
       return this
     }
 
-    fun setNegativeButton(
-      @StringRes textId: Int
-    ): Builder {
+    fun setNegativeButton(@StringRes textId: Int): Builder {
       mNegativeButtonText = mContext!!.getString(textId)
       return this
     }
@@ -211,8 +197,7 @@ class AppSettingsDialog : Parcelable {
         if (TextUtils.isEmpty(mPositiveButtonText)) mContext!!.getString(R.string.ok) else mPositiveButtonText
       mNegativeButtonText =
         if (TextUtils.isEmpty(mNegativeButtonText)) mContext!!.getString(R.string.cancel) else mNegativeButtonText
-      mRequestCode =
-        if (mRequestCode > 0) mRequestCode else DEFAULT_SETTINGS_REQ_CODE
+      mRequestCode = if (mRequestCode > 0) mRequestCode else DEFAULT_SETTINGS_REQ_CODE
       var intentFlags = 0
       if (mOpenInNewTask) {
         intentFlags = intentFlags or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -249,8 +234,7 @@ class AppSettingsDialog : Parcelable {
       intent: Intent,
       activity: Activity
     ): AppSettingsDialog {
-      val dialog: AppSettingsDialog =
-        intent.getParcelableExtra(EXTRA_APP_SETTINGS)!!
+      val dialog: AppSettingsDialog = intent.getParcelableExtra(EXTRA_APP_SETTINGS)!!
       dialog.setActivityOrFragment(activity)
       return dialog
     }

@@ -31,11 +31,9 @@ class LowApiPermissionsHelper<T> internal constructor(host: T) :
   }
 
   override val context: Context?
-    get() = if (host is Activity) {
-      host
-    } else if (host is Fragment) {
-      (host as Fragment).context
-    } else {
-      throw IllegalStateException("Unknown host: $host")
+    get() = when (host) {
+      is Activity -> host
+      is Fragment -> (host as Fragment).context
+      else -> throw IllegalStateException("Unknown host: $host")
     }
 }

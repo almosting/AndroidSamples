@@ -20,13 +20,9 @@ abstract class BaseSupportPermissionHelper<T> internal constructor(host: T) :
     perms: Array<String>
   ) {
     val fm = supportFragmentManager
-    val fragment =
-      fm.findFragmentByTag(RationaleDialogFragmentCompat.TAG)
+    val fragment = fm.findFragmentByTag(RationaleDialogFragmentCompat.TAG)
     if (fragment is RationaleDialogFragmentCompat) {
-      Log.d(
-        TAG,
-        "Found existing fragment, not showing rationale."
-      )
+      Log.d(TAG, "Found existing fragment, not showing rationale.")
       return
     }
     RationaleDialogFragmentCompat.newInstance(
@@ -36,8 +32,7 @@ abstract class BaseSupportPermissionHelper<T> internal constructor(host: T) :
       theme,
       requestCode,
       perms
-    )
-      .showAllowingStateLoss(fm, RationaleDialogFragmentCompat.TAG)
+    ).showAllowingStateLoss(fm, RationaleDialogFragmentCompat.TAG)
   }
 
   companion object {

@@ -56,10 +56,7 @@ abstract class PermissionHelper<T>(val host: T) {
     return shouldShowRationale(perms)
   }
 
-  abstract fun directRequestPermissions(
-    requestCode: Int,
-    vararg perms: String
-  )
+  abstract fun directRequestPermissions(requestCode: Int, vararg perms: String)
 
   abstract fun shouldShowRequestPermissionRationale(perm: String): Boolean
   abstract fun showRequestPermissionRationale(

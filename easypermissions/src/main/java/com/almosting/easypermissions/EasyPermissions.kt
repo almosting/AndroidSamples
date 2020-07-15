@@ -31,11 +31,7 @@ object EasyPermissions {
     Log.i(TAG, "hasPermissions: " + perms.size)
     for (perm in perms) {
       Log.i(TAG, "hasPermissions: $perm")
-      if (ContextCompat.checkSelfPermission(
-          context,
-          perm
-        ) != PackageManager.PERMISSION_GRANTED
-      ) {
+      if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
         return false
       }
     }
@@ -46,17 +42,12 @@ object EasyPermissions {
     host: Activity, rationale: String,
     requestCode: Int,   perms: Array<String>
   ) {
-    requestPermissions(
-      Builder(host, requestCode, perms)
-        .setRationale(rationale).build()
-    )
+    requestPermissions(Builder(host, requestCode, perms).setRationale(rationale).build())
   }
 
   fun requestPermissions(request: PermissionRequest) {
     if (hasPermissions(request.helper.context!!, request.perms)) {
-      notifyAlreadyHasPermissions(
-        request.helper.host!!, request.requestCode, request.perms
-      )
+      notifyAlreadyHasPermissions(request.helper.host!!, request.requestCode, request.perms)
       return
     }
     request.helper.requestPermissions(
@@ -75,10 +66,8 @@ object EasyPermissions {
     grantResults: IntArray,
     vararg receivers: Any
   ) {
-    val granted: MutableList<String> =
-      ArrayList()
-    val denied: MutableList<String> =
-      ArrayList()
+    val granted: MutableList<String> = ArrayList()
+    val denied: MutableList<String> = ArrayList()
     for (i in permissions.indices) {
       val perm = permissions[i]
       if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -108,48 +97,42 @@ object EasyPermissions {
     host: Activity,
     deniedPermissions: List<String>
   ): Boolean {
-    return PermissionHelper.newInstance(host)
-      .somePermissionPermanentlyDenied(deniedPermissions)
+    return PermissionHelper.newInstance(host).somePermissionPermanentlyDenied(deniedPermissions)
   }
 
   fun somePermissionPermanentlyDenied(
     host: Fragment,
     deniedPermissions: List<String>
   ): Boolean {
-    return PermissionHelper.newInstance(host)
-      .somePermissionPermanentlyDenied(deniedPermissions)
+    return PermissionHelper.newInstance(host).somePermissionPermanentlyDenied(deniedPermissions)
   }
 
   fun permissionPermanentlyDenied(
     host: Activity,
     deniedPermission: String
   ): Boolean {
-    return PermissionHelper.newInstance(host)
-      .permissionPermanentlyDenied(deniedPermission)
+    return PermissionHelper.newInstance(host).permissionPermanentlyDenied(deniedPermission)
   }
 
   fun permissionPermanentlyDenied(
     host: Fragment,
     deniedPermission: String
   ): Boolean {
-    return PermissionHelper.newInstance(host)
-      .permissionPermanentlyDenied(deniedPermission)
+    return PermissionHelper.newInstance(host).permissionPermanentlyDenied(deniedPermission)
   }
 
   fun somePermissionDenied(
     host: Activity,
     perms: Array<String>
   ): Boolean {
-    return PermissionHelper.newInstance(host)
-      .somePermissionDenied(perms)
+    return PermissionHelper.newInstance(host).somePermissionDenied(perms)
   }
 
   fun somePermissionDenied(
     host: Fragment,
     perms: Array<String>
   ): Boolean {
-    return PermissionHelper.newInstance(host)
-      .somePermissionDenied(perms)
+    return PermissionHelper.newInstance(host).somePermissionDenied(perms)
   }
 
   private fun notifyAlreadyHasPermissions(
@@ -178,9 +161,7 @@ object EasyPermissions {
           if (granted.value == requestCode) {
             if (method.parameterTypes.isNotEmpty()) {
               throw RuntimeException(
-                "Cannot execute method "
-                    + method.name
-                    + " because it is non-void method and/or has input parameters."
+                "Cannot execute method ${method.name} because it is non-void method and/or has input parameters."
               )
             }
             try {
@@ -204,8 +185,7 @@ object EasyPermissions {
     return if (!`object`.javaClass.simpleName.endsWith("_")) {
       false
     } else try {
-      val clazz =
-        Class.forName("org.androidannotations.api.view.HasViews")
+      val clazz = Class.forName("org.androidannotations.api.view.HasViews")
       clazz.isInstance(`object`)
     } catch (e: ClassNotFoundException) {
       false
