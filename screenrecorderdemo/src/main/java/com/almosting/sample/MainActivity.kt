@@ -4,7 +4,6 @@ import android.Manifest.permission
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.almosting.easypermissions.AfterPermissionGranted
@@ -13,17 +12,18 @@ import com.almosting.easypermissions.AppSettingsDialog.Builder
 import com.almosting.easypermissions.EasyPermissions
 import com.almosting.easypermissions.EasyPermissions.PermissionCallbacks
 import com.almosting.easypermissions.EasyPermissions.RationaleCallbacks
-import com.almosting.sample.R.id
-import com.almosting.sample.R.layout
 import com.almosting.sample.R.string
+import com.almosting.sample.databinding.ActivityMainBinding
 import java.util.Arrays
 
 class MainActivity : AppCompatActivity(), PermissionCallbacks, RationaleCallbacks {
+  private lateinit var binding: ActivityMainBinding
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(layout.activity_main)
-    findViewById<View>(id.button_camera).setOnClickListener { cameraTask() }
-    findViewById<View>(id.button_location_and_contacts).setOnClickListener { locationAndContactsTask() }
+    binding = ActivityMainBinding.inflate(layoutInflater)
+    setContentView(binding.root)
+    binding.buttonCamera.setOnClickListener { cameraTask() }
+    binding.buttonLocationAndContacts.setOnClickListener { locationAndContactsTask() }
   }
 
   @AfterPermissionGranted(RC_LOCATION_CONTACTS_PERM)

@@ -14,12 +14,11 @@ import android.os.Bundle
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.almosting.sample.MessageDialogFragment.MessageDialogListener
 import com.almosting.sample.R.id
-import com.almosting.sample.R.layout
 import com.almosting.sample.R.string
+import com.almosting.sample.databinding.ActivityScreenRecorderBinding
 import com.almosting.sample.service.ScreenRecorderService
 import com.almosting.toolbox.utils.BuildCheck
 import com.almosting.toolbox.utils.PermissionCheck
@@ -31,20 +30,15 @@ import kotlin.math.min
  */
 open class ScreenRecorderActivity : AppCompatActivity(),
   MessageDialogListener {
-  private var mRecordButton: ToggleButton? = null
-  private var mPauseButton: ToggleButton? = null
-  private var mReceiver: MyBroadcastReceiver? = null
+
+  private lateinit var binding: ActivityScreenRecorderBinding
+  private lateinit var mReceiver: MyBroadcastReceiver
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(layout.activity_screen_recorder)
-    mRecordButton =
-      findViewById(id.record_button)
-    mPauseButton =
-      findViewById(id.pause_button)
-    updateRecording(false, false)
-    if (mReceiver == null) {
-      mReceiver = MyBroadcastReceiver(this)
-    }
+    binding = ActivityScreenRecorderBinding.inflate(layoutInflater)
+    setContentView(binding.root)
+    updateRecording(false, isPausing = false)
+    mReceiver = MyBroadcastReceiver(this)
   }
 
   override fun onResume() {
@@ -103,11 +97,9 @@ open class ScreenRecorderActivity : AppCompatActivity(),
               startService(intent)
             }
           } else {
-            mRecordButton!!.setOnCheckedChangeListener(null)
-            try {
-              mRecordButton!!.isChecked = false
-            } finally {
-              mRecordButton!!.setOnCheckedChangeListener(this)
+            binding.recordButton.let {
+              it.isChecked = false
+              it.setOnCheckedChangeListener(this)
             }
           }
           id.pause_button -> if (isChecked) {
@@ -146,15 +138,14 @@ open class ScreenRecorderActivity : AppCompatActivity(),
   }
 
   private fun updateRecording(isRecording: Boolean, isPausing: Boolean) {
-    mRecordButton!!.setOnCheckedChangeListener(null)
-    mPauseButton!!.setOnCheckedChangeListener(null)
-    try {
-      mRecordButton!!.isChecked = isRecording
-      mPauseButton!!.isEnabled = isRecording
-      mPauseButton!!.isChecked = isPausing
-    } finally {
-      mRecordButton!!.setOnCheckedChangeListener(mOnCheckedChangeListener)
-      mPauseButton!!.setOnCheckedChangeListener(mOnCheckedChangeListener)
+    binding.recordButton.also {
+      it.isChecked = isRecording
+      it.setOnCheckedChangeListener(mOnCheckedChangeListener)
+    }
+    binding.pauseButton.also {
+      it.isEnabled = isRecording
+      it.isChecked = isPausing
+      it.setOnCheckedChangeListener(mOnCheckedChangeListener)
     }
   }
 
