@@ -1,1 +1,2 @@
+include ':roomwordsample'
 include ':screenrecorderdemo', ':easypermissions', ':screenrecorder'
