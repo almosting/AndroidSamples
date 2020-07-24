@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
  * @date 2020/7/23
  */
 @Database(entities = [Word::class], version = 1)
-public abstract class WordRoomDatabase : RoomDatabase() {
+abstract class WordRoomDatabase : RoomDatabase() {
   abstract fun wordDao(): WordDao
 
   companion object {
