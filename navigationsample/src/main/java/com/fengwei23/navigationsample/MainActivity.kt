@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2018 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.fengwei23.navigationsample
 
 import android.content.res.Resources
@@ -45,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     setSupportActionBar(toolbar)
 
     val host: NavHostFragment = supportFragmentManager
-      .findFragmentById(R.id.my_nav_host_fragment) as NavHostFragment? ?: return
+        .findFragmentById(R.id.my_nav_host_fragment) as NavHostFragment? ?: return
 
     // Set up Action Bar
     val navController = host.navController
@@ -73,10 +57,8 @@ class MainActivity : AppCompatActivity() {
         destination.id.toString()
       }
 
-      Toast.makeText(
-        this@MainActivity, "Navigated to $dest",
-        Toast.LENGTH_SHORT
-      ).show()
+      Toast.makeText(this@MainActivity, "Navigated to $dest", Toast.LENGTH_SHORT)
+          .show()
       Log.d("NavigationActivity", "Navigated to $dest")
     }
   }
@@ -122,7 +104,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    return super.onOptionsItemSelected(item)
+    //return super.onOptionsItemSelected(item)
     // Have Navigation UI Handle the item selection - make sure to delete
     //  the old return statement above
     //        // Have the NavigationUI look for an action or destination matching the menu
