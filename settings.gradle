@@ -1,3 +1,4 @@
+include ':daggersample'
 include ':navigationsample'
 include ':roomwordsample'
 include ':screenrecorderdemo', ':easypermissions', ':screenrecorder'
