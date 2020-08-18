@@ -37,9 +37,9 @@ class DeepLinkFragment : Fragment() {
         notificationButton.setOnClickListener {
             val editArgs = view.findViewById<EditText>(R.id.args_edit_text)
             val args = Bundle()
-            args.putString("myarg", editArgs.getText().toString())
+            args.putString("myarg", editArgs.text.toString())
 
-            val deeplink = findNavController().createDeepLink()
+            val deepLink = findNavController().createDeepLink()
                     .setDestination(R.id.deeplink_dest)
                     .setArguments(args)
                     .createPendingIntent()
@@ -52,11 +52,11 @@ class DeepLinkFragment : Fragment() {
             }
 
             val builder = NotificationCompat.Builder(
-                    context!!, "deeplink")
+                    requireContext(), "deeplink")
                     .setContentTitle("Navigation")
                     .setContentText("Deep link to Android")
                     .setSmallIcon(R.drawable.ic_android)
-                    .setContentIntent(deeplink)
+                    .setContentIntent(deepLink)
                     .setAutoCancel(true)
             notificationManager.notify(0, builder.build())
         }
